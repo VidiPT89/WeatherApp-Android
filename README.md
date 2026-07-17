@@ -1,8 +1,8 @@
 # 🤖 WeatherApp — Android Client
 
-> Native Kotlin/Jetpack Compose client for the [Weather API Aggregator](../WeatherAPI) — proves the same backend contract that powers the [web](../WeatherApp) and [iOS](../WeatherApp-iOS) clients serves Android too.
+> Native Kotlin/Jetpack Compose client for the [Weather API Aggregator](https://github.com/VidiPT89/WeatherAPI) — proves the same backend contract that powers the [web](https://github.com/VidiPT89/WeatherApp) and [iOS](https://github.com/VidiPT89/WeatherApp-iOS) clients serves Android too.
 
-**Live demo:** not published — runs in the Android Emulator against the Weather API on the host machine (see *How to Run*).
+**Live demo:** not published (no Play Store account for this project) — can also point at the live backend directly, see *How to Run*.
 
 One of three clients (Web / iOS / Android) built on top of the same backend. This app talks directly to the Weather API — it never talks to Open-Meteo/OpenWeatherMap directly.
 
@@ -58,7 +58,7 @@ app/src/main/kotlin/dev/ividi/weatherapp/
 
 ## 🚀 How to Run
 
-Prerequisites: JDK 17, Android SDK (API 34+ platform + an emulator system image), and the [Weather API](../WeatherAPI) running locally on `http://localhost:8080` (see that repo's README).
+Prerequisites: JDK 17, Android SDK (API 34+ platform + an emulator system image), and the [Weather API](https://github.com/VidiPT89/WeatherAPI) running locally on `http://localhost:8080` (see that repo's README) — or point `NetworkModule`'s `BASE_URL` at the live deployment: `https://weather-api-production-68ff.up.railway.app/`.
 
 ```bash
 export JAVA_HOME=/opt/homebrew/opt/openjdk@17   # or your JDK 17 install
