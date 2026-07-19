@@ -8,6 +8,7 @@ import dev.ividi.weatherapp.data.model.ForecastResponse
 import dev.ividi.weatherapp.data.model.GeocodingResponse
 import dev.ividi.weatherapp.data.model.HistoryEntry
 import dev.ividi.weatherapp.data.model.LoginRequest
+import dev.ividi.weatherapp.data.model.MarineResponse
 import dev.ividi.weatherapp.data.model.RegisterRequest
 import dev.ividi.weatherapp.data.model.UnitsPreference
 import dev.ividi.weatherapp.data.model.WeatherResponse
@@ -36,6 +37,12 @@ interface WeatherApiService {
         @Query("city") city: String,
         @Query("units") units: String? = null,
     ): ForecastResponse
+
+    @GET("api/v1/weather/marine")
+    suspend fun getMarine(
+        @Query("city") city: String,
+        @Query("units") units: String? = null,
+    ): MarineResponse
 
     @GET("api/v1/weather/compare")
     suspend fun compareProviders(

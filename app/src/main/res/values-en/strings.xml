@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherApp</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_compare">Compare</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Search -->
+    <string name="search_placeholder">Search for a city…</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_idle_prompt">Search for a city to see the current weather and forecast.</string>
+    <string name="dashboard_loading">Loading…</string>
+    <string name="units_label">Units: %1$s</string>
+
+    <!-- Current weather card -->
+    <string name="weather_feels_like">Feels like</string>
+    <string name="weather_humidity">Humidity</string>
+    <string name="weather_wind">Wind</string>
+    <string name="weather_sunrise">Sunrise</string>
+    <string name="weather_sunset">Sunset</string>
+    <string name="weather_uv_index">UV index</string>
+    <string name="weather_precipitation">Rain chance</string>
+
+    <!-- Cache badge -->
+    <string name="cache_fresh_data">Fresh data</string>
+    <string name="cache_served_ago">Served from cache %1$s ago</string>
+
+    <!-- Fallback banner -->
+    <string name="fallback_banner_message">Primary provider unavailable — using fallback (%1$s)</string>
+
+    <!-- Forecast -->
+    <string name="forecast_title">Forecast</string>
+    <string name="forecast_hourly_tab">Hourly</string>
+    <string name="forecast_daily_tab">Daily</string>
+    <string name="forecast_max">Max</string>
+    <string name="forecast_min">Min</string>
+
+    <!-- Sea conditions (marine) -->
+    <string name="marine_title">Sea conditions</string>
+    <string name="marine_subtitle">Water temperature and swell — does not include tide times.</string>
+    <string name="marine_water_temperature">Water temp.</string>
+    <string name="marine_wave_height">Wave height</string>
+    <string name="marine_wave_direction">Direction</string>
+    <string name="marine_wave_period">Period</string>
+    <string name="marine_unavailable">No sea data available for this location.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_units_label">Preferred temperature unit</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_subtitle">Language used across the whole app.</string>
+    <string name="settings_language_pt">Portuguese</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_theme_title">Appearance</string>
+    <string name="settings_theme_subtitle">Choose light, dark, or follow the system.</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_logout">Log out</string>
+
+    <!-- Compare -->
+    <string name="compare_title">Compare providers</string>
+    <string name="compare_idle_prompt">Search for a city to compare providers.</string>
+    <string name="compare_average">Average across successful providers: %1$s°</string>
+    <string name="compare_primary_suffix"> (primary)</string>
+    <string name="compare_unavailable">Provider unavailable</string>
+
+    <!-- Favorites -->
+    <string name="favorites_add_placeholder">Add a city</string>
+    <string name="favorites_add_button">Add</string>
+    <string name="favorites_empty">You don\'t have any favorite cities yet.</string>
+    <string name="favorites_added_message">"\"%1$s\" added to favorites."</string>
+    <string name="favorites_duplicate_suffix">" is already a favorite."</string>
+
+    <!-- History -->
+    <string name="history_title">Search history</string>
+    <string name="history_empty">You haven\'t searched for a city yet.</string>
+
+    <!-- Auth -->
+    <string name="auth_login_subtitle">Sign in to your account to continue</string>
+    <string name="auth_login_title">Sign in</string>
+    <string name="auth_register_title">Create account</string>
+    <string name="auth_register_subtitle">Password must be at least 8 characters</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_login_button">Sign in</string>
+    <string name="auth_register_button">Create account</string>
+    <string name="auth_no_account_prompt">Don\'t have an account? Sign up</string>
+    <string name="auth_has_account_prompt">Already have an account? Sign in</string>
+    <string name="auth_missing_credentials">Please fill in your email and password.</string>
+    <string name="auth_missing_email">Please provide an email.</string>
+    <string name="auth_password_too_short">Password must be at least %1$d characters.</string>
+
+    <!-- Generic UI states -->
+    <string name="error_generic_load_failed">Could not load the data. Please try again.</string>
+
+    <!-- Backend error codes (errorCode field on ApiErrorBody) -->
+    <string name="error_city_not_found">We couldn\'t find that city.</string>
+    <string name="error_provider_unavailable">The weather provider is currently unavailable. Please try again later.</string>
+    <string name="error_provider_quota_exceeded">The provider\'s quota has been reached. Please try again later.</string>
+    <string name="error_validation_failed">Please check the information you entered.</string>
+    <string name="error_email_already_registered">An account with this email already exists.</string>
+    <string name="error_invalid_credentials">Incorrect email or password.</string>
+    <string name="error_favorite_already_exists">This city is already in your favorites.</string>
+    <string name="error_unauthenticated">Your session has expired. Please sign in again.</string>
+    <string name="error_access_denied">You don\'t have permission to access this resource.</string>
+    <string name="error_rate_limit_exceeded">Too many requests. Please wait a moment and try again.</string>
+    <string name="error_internal_error">Something went wrong.</string>
+    <string name="error_generic">Could not complete the request.</string>
+
+    <!-- Short weekday labels for the daily forecast chart, Monday-first -->
+    <string-array name="weekday_labels_short">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
+</resources>

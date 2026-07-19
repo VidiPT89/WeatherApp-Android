@@ -17,10 +17,11 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import retrofit2.Retrofit
 
 /**
- * The emulator reaches the host machine's `localhost` via the special alias `10.0.2.2`.
- * See `network_security_config.xml` for the matching cleartext-traffic exception.
+ * Points at the live, deployed backend. `network_security_config.xml` still carries a
+ * cleartext exception for `10.0.2.2`/`localhost` for anyone switching this back to a local
+ * backend during development; it has no effect on this HTTPS URL.
  */
-private const val BASE_URL = "http://10.0.2.2:8080/"
+private const val BASE_URL = "https://weather-api-production-68ff.up.railway.app/"
 private const val CONNECT_TIMEOUT_SECONDS = 15L
 private const val READ_TIMEOUT_SECONDS = 15L
 private const val JSON_MEDIA_TYPE = "application/json"

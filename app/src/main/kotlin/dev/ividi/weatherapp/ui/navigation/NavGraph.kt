@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.compose.ui.res.stringResource
 import dev.ividi.weatherapp.ui.auth.AuthViewModel
 import dev.ividi.weatherapp.ui.auth.LoginScreen
 import dev.ividi.weatherapp.ui.auth.RegisterScreen
@@ -115,6 +116,7 @@ private fun MainBottomBar(navController: NavHostController) {
             val isSelected = currentDestination?.hierarchy?.any { destination ->
                 destination.route?.startsWith(item.baseRoute) == true
             } == true
+            val label = stringResource(item.labelRes)
 
             NavigationBarItem(
                 selected = isSelected,
@@ -127,8 +129,8 @@ private fun MainBottomBar(navController: NavHostController) {
                         restoreState = true
                     }
                 },
-                icon = { androidx.compose.material3.Icon(item.icon, contentDescription = item.label) },
-                label = { Text(item.label) },
+                icon = { androidx.compose.material3.Icon(item.icon, contentDescription = label) },
+                label = { Text(label) },
             )
         }
     }

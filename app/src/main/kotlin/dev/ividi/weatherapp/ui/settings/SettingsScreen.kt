@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -19,10 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.Units
+import dev.ividi.weatherapp.data.repository.AppLanguage
+import dev.ividi.weatherapp.data.repository.ThemeMode
 import dev.ividi.weatherapp.ui.common.UiState
 
 @Composable
@@ -31,6 +34,8 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val preferencesState by viewModel.preferencesState.collectAsStateWithLifecycle()
+    val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+    val language by viewModel.language.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -38,9 +43,9 @@ fun SettingsScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        Text(text = "Definições", style = MaterialTheme.typography.titleLarge)
+        Text(text = stringResource(R.string.settings_title), style = MaterialTheme.typography.titleLarge)
 
-        Text(text = "Unidade de temperatura preferida", style = MaterialTheme.typography.bodyLarge)
+        Text(text = stringResource(R.string.settings_units_label), style = MaterialTheme.typography.bodyLarge)
 
         when (val state = preferencesState) {
             is UiState.Loading -> Box(Modifier.fillMaxWidth().padding(24.dp), Alignment.Center) {
@@ -63,12 +68,55 @@ fun SettingsScreen(
             }
         }
 
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(text = stringResource(R.string.settings_language_title), style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(R.string.settings_language_subtitle), style = MaterialTheme.typography.bodySmall)
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                AppLanguage.entries.forEachIndexed { index, entry ->
+                    SegmentedButton(
+                        selected = language == entry,
+                        onClick = { viewModel.updateLanguage(entry) },
+                        shape = SegmentedButtonDefaults.itemShape(index, AppLanguage.entries.size),
+                    ) {
+                        Text(
+                            when (entry) {
+                                AppLanguage.PT -> stringResource(R.string.settings_language_pt)
+                                AppLanguage.EN -> stringResource(R.string.settings_language_en)
+                            },
+                        )
+                    }
+                }
+            }
+        }
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(text = stringResource(R.string.settings_theme_title), style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(R.string.settings_theme_subtitle), style = MaterialTheme.typography.bodySmall)
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                ThemeMode.entries.forEachIndexed { index, entry ->
+                    SegmentedButton(
+                        selected = themeMode == entry,
+                        onClick = { viewModel.updateThemeMode(entry) },
+                        shape = SegmentedButtonDefaults.itemShape(index, ThemeMode.entries.size),
+                    ) {
+                        Text(
+                            when (entry) {
+                                ThemeMode.SYSTEM -> stringResource(R.string.settings_theme_system)
+                                ThemeMode.LIGHT -> stringResource(R.string.settings_theme_light)
+                                ThemeMode.DARK -> stringResource(R.string.settings_theme_dark)
+                            },
+                        )
+                    }
+                }
+            }
+        }
+
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             OutlinedButton(onClick = {
                 viewModel.logout()
                 onLoggedOut()
             }) {
-                Text("Terminar sessão")
+                Text(stringResource(R.string.settings_logout))
             }
         }
     }

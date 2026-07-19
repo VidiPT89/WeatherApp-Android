@@ -6,12 +6,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ividi.weatherapp.data.auth.AuthRepository
 import dev.ividi.weatherapp.data.model.Units
 import dev.ividi.weatherapp.data.network.ApiException
+import dev.ividi.weatherapp.data.repository.AppLanguage
+import dev.ividi.weatherapp.data.repository.AppPreferencesRepository
 import dev.ividi.weatherapp.data.repository.PreferencesRepository
+import dev.ividi.weatherapp.data.repository.ThemeMode
 import dev.ividi.weatherapp.ui.common.UiState
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val GENERIC_ERROR_MESSAGE = "Não foi possível carregar as preferências."
@@ -20,13 +25,28 @@ private const val GENERIC_ERROR_MESSAGE = "Não foi possível carregar as prefer
 class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val authRepository: AuthRepository,
+    private val appPreferencesRepository: AppPreferencesRepository,
 ) : ViewModel() {
 
     private val _preferencesState = MutableStateFlow<UiState<Units>>(UiState.Loading)
     val preferencesState: StateFlow<UiState<Units>> = _preferencesState.asStateFlow()
 
+    val themeMode: StateFlow<ThemeMode> = appPreferencesRepository.themeMode
+        .stateIn(viewModelScope, SharingStarted.Eagerly, ThemeMode.SYSTEM)
+
+    val language: StateFlow<AppLanguage> = appPreferencesRepository.language
+        .stateIn(viewModelScope, SharingStarted.Eagerly, AppLanguage.PT)
+
     init {
         loadPreferences()
+    }
+
+    fun updateThemeMode(mode: ThemeMode) {
+        viewModelScope.launch { appPreferencesRepository.setThemeMode(mode) }
+    }
+
+    fun updateLanguage(language: AppLanguage) {
+        viewModelScope.launch { appPreferencesRepository.setLanguage(language) }
     }
 
     fun loadPreferences() {

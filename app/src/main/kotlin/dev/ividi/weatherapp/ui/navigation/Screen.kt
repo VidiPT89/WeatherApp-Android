@@ -1,5 +1,6 @@
 package dev.ividi.weatherapp.ui.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CompareArrows
 import androidx.compose.material.icons.filled.Favorite
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
+import dev.ividi.weatherapp.R
 
 sealed class Screen(val route: String) {
     data object Login : Screen("login")
@@ -28,14 +30,14 @@ sealed class Screen(val route: String) {
 data class BottomNavItem(
     val screen: Screen,
     val baseRoute: String,
-    val label: String,
+    @param:StringRes val labelRes: Int,
     val icon: ImageVector,
 )
 
 val bottomNavItems = listOf(
-    BottomNavItem(Screen.Dashboard, "dashboard", "Início", Icons.Filled.Home),
-    BottomNavItem(Screen.Compare, "compare", "Comparar", Icons.Filled.CompareArrows),
-    BottomNavItem(Screen.Favorites, "favorites", "Favoritos", Icons.Filled.Favorite),
-    BottomNavItem(Screen.History, "history", "Histórico", Icons.Filled.History),
-    BottomNavItem(Screen.Settings, "settings", "Definições", Icons.Filled.Settings),
+    BottomNavItem(Screen.Dashboard, "dashboard", R.string.nav_home, Icons.Filled.Home),
+    BottomNavItem(Screen.Compare, "compare", R.string.nav_compare, Icons.Filled.CompareArrows),
+    BottomNavItem(Screen.Favorites, "favorites", R.string.nav_favorites, Icons.Filled.Favorite),
+    BottomNavItem(Screen.History, "history", R.string.nav_history, Icons.Filled.History),
+    BottomNavItem(Screen.Settings, "settings", R.string.nav_settings, Icons.Filled.Settings),
 )

@@ -37,8 +37,8 @@ fun SearchAutocompleteField(
     suggestions: List<GeocodingResult>,
     onSuggestionSelected: (GeocodingResult) -> Unit,
     onSearchSubmit: (String) -> Unit,
+    placeholder: String,
     modifier: Modifier = Modifier,
-    placeholder: String = "Procurar cidade...",
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         OutlinedTextField(

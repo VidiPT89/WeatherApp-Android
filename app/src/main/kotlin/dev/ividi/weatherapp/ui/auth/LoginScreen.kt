@@ -21,11 +21,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.ui.common.UiState
 
 @Composable
@@ -51,9 +53,9 @@ fun LoginScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(text = "WeatherApp", style = MaterialTheme.typography.headlineMedium)
+        Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
         Text(
-            text = "Entre na sua conta para continuar",
+            text = stringResource(R.string.auth_login_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(top = 4.dp, bottom = 24.dp),
         )
@@ -61,7 +63,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.auth_email)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth(),
@@ -69,7 +71,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Palavra-passe") },
+            label = { Text(stringResource(R.string.auth_password)) },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -96,7 +98,7 @@ fun LoginScreen(
             if (uiState is UiState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.size(20.dp))
             } else {
-                Text("Entrar")
+                Text(stringResource(R.string.auth_login_button))
             }
         }
 
@@ -106,7 +108,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(top = 4.dp),
         ) {
-            Text("Não tem conta? Registe-se")
+            Text(stringResource(R.string.auth_no_account_prompt))
         }
     }
 }

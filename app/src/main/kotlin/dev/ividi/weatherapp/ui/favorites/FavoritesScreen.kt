@@ -27,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.FavoriteEntry
 import dev.ividi.weatherapp.ui.common.UiState
 
@@ -55,7 +57,7 @@ fun FavoritesScreen(
             OutlinedTextField(
                 value = newCityText,
                 onValueChange = { newCityText = it },
-                label = { Text("Adicionar cidade") },
+                label = { Text(stringResource(R.string.favorites_add_placeholder)) },
                 singleLine = true,
                 modifier = Modifier.weight(1f),
             )
@@ -63,7 +65,7 @@ fun FavoritesScreen(
                 viewModel.addFavorite(newCityText)
                 newCityText = ""
             }) {
-                Text("Adicionar")
+                Text(stringResource(R.string.favorites_add_button))
             }
         }
 
@@ -80,7 +82,7 @@ fun FavoritesScreen(
                 CircularProgressIndicator()
             }
             is UiState.Error -> Text(state.message, color = MaterialTheme.colorScheme.error)
-            is UiState.Empty -> Text("Ainda não tem cidades favoritas.")
+            is UiState.Empty -> Text(stringResource(R.string.favorites_empty))
             is UiState.Success -> {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(state.data) { favorite ->

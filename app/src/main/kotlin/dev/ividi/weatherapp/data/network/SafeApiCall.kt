@@ -35,5 +35,6 @@ private fun HttpException.toApiException(json: Json): ApiException.HttpError {
         statusCode = code(),
         backendMessage = backendMessage,
         path = parsedBody?.path,
+        errorCode = parsedBody?.errorCode,
     )
 }

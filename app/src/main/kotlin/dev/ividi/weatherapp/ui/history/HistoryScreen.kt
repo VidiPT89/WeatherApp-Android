@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.HistoryEntry
 import dev.ividi.weatherapp.ui.common.UiState
 import dev.ividi.weatherapp.util.toDisplayDateTime
@@ -33,7 +35,7 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        Text(text = "Histórico de pesquisas", style = MaterialTheme.typography.titleLarge)
+        Text(text = stringResource(R.string.history_title), style = MaterialTheme.typography.titleLarge)
 
         when (val state = historyState) {
             is UiState.Loading -> Box(
@@ -41,7 +43,7 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
                 Alignment.Center,
             ) { CircularProgressIndicator() }
             is UiState.Error -> Text(state.message, color = MaterialTheme.colorScheme.error)
-            is UiState.Empty -> Text("Ainda não pesquisou nenhuma cidade.")
+            is UiState.Empty -> Text(stringResource(R.string.history_empty))
             is UiState.Success -> {
                 LazyColumn(
                     modifier = Modifier.padding(top = 12.dp),

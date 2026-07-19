@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Declares the languages this app supports for Android 13+'s per-app language picker
+     (Settings > Apps > WeatherApp > Language). Paired with AppCompatDelegate.setApplicationLocales
+     in-app for older API levels and for the in-app Settings toggle. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="pt" />
+    <locale android:name="en" />
+</locale-config>

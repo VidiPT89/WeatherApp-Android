@@ -20,11 +20,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.ui.common.UiState
 
 @Composable
@@ -50,9 +52,9 @@ fun RegisterScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(text = "Criar conta", style = MaterialTheme.typography.headlineMedium)
+        Text(text = stringResource(R.string.auth_register_title), style = MaterialTheme.typography.headlineMedium)
         Text(
-            text = "A palavra-passe deve ter pelo menos 8 caracteres",
+            text = stringResource(R.string.auth_register_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(top = 4.dp, bottom = 24.dp),
         )
@@ -60,7 +62,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.auth_email)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth(),
@@ -68,7 +70,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Palavra-passe") },
+            label = { Text(stringResource(R.string.auth_password)) },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -95,7 +97,7 @@ fun RegisterScreen(
             if (uiState is UiState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.size(20.dp))
             } else {
-                Text("Registar")
+                Text(stringResource(R.string.auth_register_button))
             }
         }
 
@@ -105,7 +107,7 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .padding(top = 4.dp),
         ) {
-            Text("Já tem conta? Entrar")
+            Text(stringResource(R.string.auth_has_account_prompt))
         }
     }
 }

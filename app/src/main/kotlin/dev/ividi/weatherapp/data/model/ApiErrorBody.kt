@@ -10,4 +10,5 @@ data class ApiErrorBody(
     val error: String? = null,
     val message: String? = null,
     val path: String? = null,
+    val errorCode: String? = null,
 )

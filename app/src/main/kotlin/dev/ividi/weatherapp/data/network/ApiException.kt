@@ -11,6 +11,8 @@ sealed class ApiException(message: String, cause: Throwable? = null) : Exception
         val statusCode: Int,
         val backendMessage: String,
         val path: String? = null,
+        /** The backend's stable `errorCode` (e.g. "CITY_NOT_FOUND"), when present. */
+        val errorCode: String? = null,
     ) : ApiException(backendMessage)
 
     /** No usable connection to the backend (timeout, DNS, connection refused, etc). */

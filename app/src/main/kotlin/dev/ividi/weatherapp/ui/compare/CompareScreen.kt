@@ -17,10 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.ProviderResult
 import dev.ividi.weatherapp.ui.common.SearchAutocompleteField
 import dev.ividi.weatherapp.ui.common.UiState
@@ -40,7 +42,7 @@ fun CompareScreen(viewModel: CompareViewModel = hiltViewModel()) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(text = "Comparar provedores", style = MaterialTheme.typography.titleLarge)
+        Text(text = stringResource(R.string.compare_title), style = MaterialTheme.typography.titleLarge)
 
         SearchAutocompleteField(
             query = searchQuery,
@@ -48,10 +50,11 @@ fun CompareScreen(viewModel: CompareViewModel = hiltViewModel()) {
             suggestions = suggestions,
             onSuggestionSelected = viewModel::onSuggestionSelected,
             onSearchSubmit = viewModel::onSearchSubmit,
+            placeholder = stringResource(R.string.search_placeholder),
         )
 
         when (val state = compareState) {
-            is UiState.Empty -> Text("Procure uma cidade para comparar os provedores.")
+            is UiState.Empty -> Text(stringResource(R.string.compare_idle_prompt))
             is UiState.Loading -> Box(Modifier.fillMaxWidth().padding(24.dp), Alignment.Center) {
                 CircularProgressIndicator()
             }
@@ -62,7 +65,7 @@ fun CompareScreen(viewModel: CompareViewModel = hiltViewModel()) {
                     state.data.results.forEach { result -> ProviderResultCard(result) }
                     average?.let {
                         Text(
-                            text = "Média entre provedores com sucesso: ${round(it).toInt()}°",
+                            text = stringResource(R.string.compare_average, round(it).toInt().toString()),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold,
                         )
@@ -93,7 +96,7 @@ private fun ProviderResultCard(result: ProviderResult) {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = result.provider + if (isPrimary) " (principal)" else "",
+                    text = result.provider + if (isPrimary) stringResource(R.string.compare_primary_suffix) else "",
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -105,7 +108,7 @@ private fun ProviderResultCard(result: ProviderResult) {
                 Text(text = result.weather.description.replaceFirstChar { it.uppercase() })
             } else {
                 Text(
-                    text = result.errorMessage ?: "Provider indisponível",
+                    text = result.errorMessage ?: stringResource(R.string.compare_unavailable),
                     color = MaterialTheme.colorScheme.error,
                 )
             }

@@ -9,6 +9,7 @@ import dev.ividi.weatherapp.data.network.ApiException
 import dev.ividi.weatherapp.data.repository.CompareRepository
 import dev.ividi.weatherapp.data.repository.GeocodingRepository
 import dev.ividi.weatherapp.ui.common.UiState
+import dev.ividi.weatherapp.util.ErrorMessageProvider
 import dev.ividi.weatherapp.util.citySuggestionsFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,12 +17,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-private const val GENERIC_ERROR_MESSAGE = "Não foi possível comparar os provedores."
-
 @HiltViewModel
 class CompareViewModel @Inject constructor(
     private val compareRepository: CompareRepository,
     private val geocodingRepository: GeocodingRepository,
+    private val errorMessageProvider: ErrorMessageProvider,
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -62,7 +62,7 @@ class CompareViewModel @Inject constructor(
             _compareState.value = try {
                 UiState.Success(compareRepository.compareProviders(city = city, units = null))
             } catch (error: ApiException) {
-                UiState.Error(error.message ?: GENERIC_ERROR_MESSAGE)
+                UiState.Error(errorMessageProvider.messageFor(error))
             }
         }
     }

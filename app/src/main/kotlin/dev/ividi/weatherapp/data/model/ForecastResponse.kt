@@ -26,12 +26,21 @@ data class HourlyForecastEntry(
     val time: LocalDateTime,
     val temperature: Double,
     val description: String,
+    val precipitationProbability: Int,
 )
 
+/**
+ * [sunrise]/[sunset] are local ISO datetimes with no timezone offset (same wire shape as
+ * [HourlyForecastEntry.time]), so they are parsed as [LocalDateTime], never as an [Instant].
+ */
 @Serializable
 data class DailyForecastEntry(
     val date: LocalDate,
     val temperatureMax: Double,
     val temperatureMin: Double,
     val description: String,
+    val sunrise: LocalDateTime,
+    val sunset: LocalDateTime,
+    val uvIndexMax: Double,
+    val precipitationProbabilityMax: Int,
 )
