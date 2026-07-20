@@ -9,9 +9,11 @@ import dev.ividi.weatherapp.data.model.GeocodingResponse
 import dev.ividi.weatherapp.data.model.HistoryEntry
 import dev.ividi.weatherapp.data.model.LoginRequest
 import dev.ividi.weatherapp.data.model.MarineResponse
+import dev.ividi.weatherapp.data.model.RefreshRequest
 import dev.ividi.weatherapp.data.model.RegisterRequest
 import dev.ividi.weatherapp.data.model.UnitsPreference
 import dev.ividi.weatherapp.data.model.WeatherResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -25,6 +27,13 @@ interface WeatherApiService {
 
     @POST("api/v1/auth/login")
     suspend fun login(@Body request: LoginRequest): AuthResponse
+
+    @POST("api/v1/auth/refresh")
+    suspend fun refresh(@Body request: RefreshRequest): AuthResponse
+
+    /** `Response<Unit>` (not a bare suspend return) so the 204 body is never decoded. */
+    @POST("api/v1/auth/logout")
+    suspend fun logout(@Body request: RefreshRequest): Response<Unit>
 
     @GET("api/v1/weather")
     suspend fun getWeather(

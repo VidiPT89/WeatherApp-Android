@@ -1,6 +1,7 @@
 package dev.ividi.weatherapp.data.auth
 
 import dev.ividi.weatherapp.data.model.LoginRequest
+import dev.ividi.weatherapp.data.model.RefreshRequest
 import dev.ividi.weatherapp.data.model.RegisterRequest
 import dev.ividi.weatherapp.data.network.WeatherApiService
 import dev.ividi.weatherapp.data.network.safeApiCall
@@ -27,17 +28,21 @@ class AuthRepository @Inject constructor(
         val response = safeApiCall(json) {
             apiService.register(RegisterRequest(email = email, password = password))
         }
-        tokenStorage.saveToken(response.token)
+        tokenStorage.saveTokens(response.token, response.refreshToken)
     }
 
     suspend fun login(email: String, password: String) {
         val response = safeApiCall(json) {
             apiService.login(LoginRequest(email = email, password = password))
         }
-        tokenStorage.saveToken(response.token)
+        tokenStorage.saveTokens(response.token, response.refreshToken)
     }
 
-    fun logout() {
-        tokenStorage.clearToken()
+    /** Best-effort server-side revocation -- local state is cleared regardless of the result. */
+    suspend fun logout() {
+        tokenStorage.getRefreshToken()?.let { refreshToken ->
+            runCatching { apiService.logout(RefreshRequest(refreshToken)) }
+        }
+        tokenStorage.clearTokens()
     }
 }

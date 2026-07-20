@@ -19,4 +19,10 @@ data class AuthResponse(
     val token: String,
     val tokenType: String,
     val expiresInSeconds: Long,
+    val refreshToken: String,
+)
+
+@Serializable
+data class RefreshRequest(
+    val refreshToken: String,
 )

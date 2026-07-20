@@ -13,15 +13,17 @@ import kotlinx.coroutines.flow.asStateFlow
 
 private const val ENCRYPTED_PREFS_FILE_NAME = "weather_app_secure_prefs"
 private const val KEY_JWT_TOKEN = "jwt_token"
+private const val KEY_REFRESH_TOKEN = "refresh_token"
 
 /**
- * Persists the JWT in [EncryptedSharedPreferences] (never plain [SharedPreferences]) and
- * exposes it both synchronously -- for [dev.ividi.weatherapp.data.network.AuthInterceptor],
- * which runs on OkHttp's dispatcher thread -- and reactively via [tokenFlow] for the UI layer
- * to react to login/logout.
+ * Persists the access + refresh tokens in [EncryptedSharedPreferences] (never plain
+ * [SharedPreferences]) and exposes the access token both synchronously -- for
+ * [dev.ividi.weatherapp.data.network.AuthInterceptor] and
+ * [dev.ividi.weatherapp.data.network.TokenAuthenticator], which run on OkHttp's dispatcher
+ * thread -- and reactively via [tokenFlow] for the UI layer to react to login/logout.
  */
 @Singleton
-class TokenStorage @Inject constructor(@ApplicationContext context: Context) {
+class TokenStorage @Inject constructor(@ApplicationContext context: Context) : TokenStore {
 
     private val masterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -38,15 +40,23 @@ class TokenStorage @Inject constructor(@ApplicationContext context: Context) {
     private val _tokenFlow = MutableStateFlow(readToken())
     val tokenFlow: StateFlow<String?> = _tokenFlow.asStateFlow()
 
-    fun getToken(): String? = _tokenFlow.value
+    override fun getToken(): String? = _tokenFlow.value
 
-    fun saveToken(token: String) {
-        encryptedPrefs.edit().putString(KEY_JWT_TOKEN, token).apply()
+    override fun getRefreshToken(): String? = encryptedPrefs.getString(KEY_REFRESH_TOKEN, null)
+
+    override fun saveTokens(token: String, refreshToken: String) {
+        encryptedPrefs.edit()
+            .putString(KEY_JWT_TOKEN, token)
+            .putString(KEY_REFRESH_TOKEN, refreshToken)
+            .apply()
         _tokenFlow.value = token
     }
 
-    fun clearToken() {
-        encryptedPrefs.edit().remove(KEY_JWT_TOKEN).apply()
+    override fun clearTokens() {
+        encryptedPrefs.edit()
+            .remove(KEY_JWT_TOKEN)
+            .remove(KEY_REFRESH_TOKEN)
+            .apply()
         _tokenFlow.value = null
     }
 
