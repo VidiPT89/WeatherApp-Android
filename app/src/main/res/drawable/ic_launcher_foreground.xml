@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Simple sun-and-cloud glyph -->
-    <path
-        android:fillColor="#FFF176"
-        android:pathData="M54,30m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0" />
+    <!-- Sun -->
+    <path android:pathData="M82,40a16,16 0 1 1,-32,0a16,16 0 1 1,32,0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="40"
+                android:startY="20"
+                android:endX="80"
+                android:endY="60"
+                android:startColor="#FDE68A"
+                android:endColor="#F59E0B" />
+        </aapt:attr>
+    </path>
+    <!-- Cloud (kept within the ~66dp adaptive-icon safe zone) -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M38,58 c-8,0 -14,6 -14,13 c0,7 6,13 14,13 h34 c7,0 13,-5.5 13,-12.5 c0,-6.5 -5,-11.8 -11.4,-12.4 c-1.8,-9.6 -10.4,-16.6 -20.6,-16.6 c-9.6,0 -17.8,6.4 -20.3,15.2 Z" />
+        android:pathData="M50,57a12,12 0 1 1,-24,0a12,12 0 1 1,24,0Z
+                           M70,49a16,16 0 1 1,-32,0a16,16 0 1 1,32,0Z
+                           M79,57a12,12 0 1 1,-24,0a12,12 0 1 1,24,0Z
+                           M38.5,57 H67.5 A10.5,10.5 0 0 1 67.5,78 H38.5 A10.5,10.5 0 0 1 38.5,57 Z" />
 </vector>
