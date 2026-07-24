@@ -13,7 +13,6 @@
         android:localeConfig="@xml/locales_config"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.WeatherApp"
-        android:usesCleartextTraffic="true"
         tools:targetApi="26"
         xmlns:tools="http://schemas.android.com/tools">
 

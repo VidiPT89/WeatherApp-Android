@@ -3,6 +3,7 @@ package dev.ividi.weatherapp.ui.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import dev.ividi.weatherapp.data.model.WeatherInsightsResponse
  * fishing conditions -- derived indicators computed server-side from data already fetched for
  * the dashboard, from the `/insights` endpoint.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun WeatherInsightsCard(insights: WeatherInsightsResponse, modifier: Modifier = Modifier) {
     Card(

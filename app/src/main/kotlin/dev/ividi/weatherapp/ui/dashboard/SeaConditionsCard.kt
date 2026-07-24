@@ -19,7 +19,10 @@ import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.MarineResponse
 import dev.ividi.weatherapp.data.model.TideEvent
 import dev.ividi.weatherapp.data.model.Units
+import dev.ividi.weatherapp.util.toDisplayTime
 import kotlin.math.roundToInt
+
+private const val METERS_TO_FEET = 3.281
 
 /**
  * "Sea conditions" card: water temperature, swell (wave height/direction/period) and estimated
@@ -90,7 +93,7 @@ fun SeaConditionsCard(marine: MarineResponse, modifier: Modifier = Modifier) {
                     ) {
                         marine.tideEvents.forEach { event ->
                             Text(
-                                text = "${tideLabel(event)} ${formatTideTime(event.time)}",
+                                text = "${tideLabel(event)} ${event.time.toDisplayTime()}",
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
@@ -104,8 +107,6 @@ fun SeaConditionsCard(marine: MarineResponse, modifier: Modifier = Modifier) {
 @Composable
 private fun tideLabel(event: TideEvent): String =
     stringResource(if (event.isHigh) R.string.marine_tide_high else R.string.marine_tide_low)
-
-private fun formatTideTime(time: String): String = time.substringAfter("T", time)
 
 @Composable
 private fun SeaConditionDetail(label: String, value: String) {
@@ -124,7 +125,7 @@ private fun formatWaterTemperature(value: Double?, units: Units): String {
 private fun formatWaveHeight(value: Double?, units: Units): String {
     if (value == null) return "—"
     return if (units == Units.IMPERIAL) {
-        "${"%.1f".format(value * 3.281)} ft"
+        "${"%.1f".format(value * METERS_TO_FEET)} ft"
     } else {
         "${"%.1f".format(value)} m"
     }

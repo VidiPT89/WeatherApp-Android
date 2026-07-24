@@ -1,7 +1,6 @@
 package dev.ividi.weatherapp.ui.dashboard
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -115,18 +114,20 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
         }
 
         item {
-            AnimatedVisibility(visible = marineState is UiState.Success) {
-                (marineState as? UiState.Success)?.let { state ->
-                    SeaConditionsCard(marine = state.data)
-                }
+            when (val state = marineState) {
+                is UiState.Success -> SeaConditionsCard(marine = state.data)
+                is UiState.Loading -> ChartSkeleton()
+                is UiState.Error -> ErrorStateMessage(state.message)
+                is UiState.Empty -> Unit
             }
         }
 
         item {
-            AnimatedVisibility(visible = insightsState is UiState.Success) {
-                (insightsState as? UiState.Success)?.let { state ->
-                    WeatherInsightsCard(insights = state.data)
-                }
+            when (val state = insightsState) {
+                is UiState.Success -> WeatherInsightsCard(insights = state.data)
+                is UiState.Loading -> ChartSkeleton()
+                is UiState.Error -> ErrorStateMessage(state.message)
+                is UiState.Empty -> Unit
             }
         }
     }

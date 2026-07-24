@@ -1,5 +1,6 @@
 package dev.ividi.weatherapp.data.model
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 /**
@@ -9,7 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TideEvent(
     val type: String,
-    val time: String,
+    val time: LocalDateTime,
 ) {
     val isHigh: Boolean get() = type == "high"
 }
