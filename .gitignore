@@ -10,3 +10,6 @@ build/
 local.properties
 *.hprof
 .kotlin/
+
+# claude code local config
+.claude/
