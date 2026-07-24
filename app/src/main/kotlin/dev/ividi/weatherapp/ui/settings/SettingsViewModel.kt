@@ -11,6 +11,7 @@ import dev.ividi.weatherapp.data.repository.AppPreferencesRepository
 import dev.ividi.weatherapp.data.repository.PreferencesRepository
 import dev.ividi.weatherapp.data.repository.ThemeMode
 import dev.ividi.weatherapp.ui.common.UiState
+import dev.ividi.weatherapp.util.ErrorMessageProvider
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,13 +20,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-private const val GENERIC_ERROR_MESSAGE = "Não foi possível carregar as preferências."
-
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val authRepository: AuthRepository,
     private val appPreferencesRepository: AppPreferencesRepository,
+    private val errorMessageProvider: ErrorMessageProvider,
 ) : ViewModel() {
 
     private val _preferencesState = MutableStateFlow<UiState<Units>>(UiState.Loading)
@@ -55,7 +55,7 @@ class SettingsViewModel @Inject constructor(
             _preferencesState.value = try {
                 UiState.Success(preferencesRepository.getPreferredUnits())
             } catch (error: ApiException) {
-                UiState.Error(error.message ?: GENERIC_ERROR_MESSAGE)
+                UiState.Error(errorMessageProvider.messageFor(error))
             }
         }
     }

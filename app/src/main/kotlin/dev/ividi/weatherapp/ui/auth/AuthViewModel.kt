@@ -3,9 +3,12 @@ package dev.ividi.weatherapp.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.auth.AuthRepository
 import dev.ividi.weatherapp.data.network.ApiException
 import dev.ividi.weatherapp.ui.common.UiState
+import dev.ividi.weatherapp.util.ErrorMessageProvider
+import dev.ividi.weatherapp.util.StringProvider
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +23,8 @@ private const val MIN_PASSWORD_LENGTH = 8
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
+    private val errorMessageProvider: ErrorMessageProvider,
+    private val stringProvider: StringProvider,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<Unit>>(UiState.Empty)
@@ -44,14 +49,14 @@ class AuthViewModel @Inject constructor(
                 authRepository.register(email.trim(), password)
                 _uiState.value = UiState.Success(Unit)
             } catch (error: ApiException) {
-                _uiState.value = UiState.Error(error.message ?: "Falha no registo.")
+                _uiState.value = UiState.Error(errorMessageProvider.messageFor(error))
             }
         }
     }
 
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
-            _uiState.value = UiState.Error("Preencha o email e a palavra-passe.")
+            _uiState.value = UiState.Error(stringProvider.get(R.string.auth_missing_credentials))
             return
         }
         _uiState.value = UiState.Loading
@@ -60,7 +65,7 @@ class AuthViewModel @Inject constructor(
                 authRepository.login(email.trim(), password)
                 _uiState.value = UiState.Success(Unit)
             } catch (error: ApiException) {
-                _uiState.value = UiState.Error(error.message ?: "Falha no login.")
+                _uiState.value = UiState.Error(errorMessageProvider.messageFor(error))
             }
         }
     }
@@ -70,8 +75,9 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun validateCredentials(email: String, password: String): String? = when {
-        email.isBlank() -> "Indique um email."
-        password.length < MIN_PASSWORD_LENGTH -> "A palavra-passe deve ter pelo menos $MIN_PASSWORD_LENGTH caracteres."
+        email.isBlank() -> stringProvider.get(R.string.auth_missing_email)
+        password.length < MIN_PASSWORD_LENGTH ->
+            stringProvider.get(R.string.auth_password_too_short, MIN_PASSWORD_LENGTH)
         else -> null
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -37,6 +38,20 @@ fun WeatherAppNavGraph() {
     val isLoggedIn by authViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
     val startDestination = if (isLoggedIn) Screen.Dashboard.routeFor() else Screen.Login.route
+
+    // TokenAuthenticator clears the session in the background when a refresh fails (session
+    // fully expired) -- without this, the user is left stranded on whatever screen they were on,
+    // with every subsequent request 401ing silently.
+    LaunchedEffect(isLoggedIn) {
+        if (!isLoggedIn) {
+            val current = navController.currentDestination?.route
+            if (current != Screen.Login.route && current != Screen.Register.route) {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        }
+    }
 
     Scaffold(
         bottomBar = {

@@ -12,7 +12,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.ui.theme.CacheAmberContainer
 import dev.ividi.weatherapp.ui.theme.FreshGreen
 import dev.ividi.weatherapp.ui.theme.FreshGreenContainer
@@ -32,7 +34,7 @@ private const val TICK_INTERVAL_MS = 1_000L
 fun CacheBadge(fromCache: Boolean, observedAt: Instant, modifier: Modifier = Modifier) {
     if (!fromCache) {
         Pill(
-            text = "Dados frescos",
+            text = stringResource(R.string.cache_fresh_data),
             containerColor = FreshGreenContainer,
             contentColor = FreshGreen,
             modifier = modifier,
@@ -50,7 +52,7 @@ fun CacheBadge(fromCache: Boolean, observedAt: Instant, modifier: Modifier = Mod
 
     val age = cacheAgeBetween(observedAt, now).toCompactDisplayString()
     Pill(
-        text = "Servido da cache há $age",
+        text = stringResource(R.string.cache_served_ago, age),
         containerColor = CacheAmberContainer,
         contentColor = dev.ividi.weatherapp.ui.theme.CacheAmber,
         modifier = modifier,
