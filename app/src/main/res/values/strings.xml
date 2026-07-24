@@ -61,10 +61,10 @@
     <string name="settings_theme_system">Sistema</string>
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Escuro</string>
-    <string name="settings_about_title">Sobre</string>
+    <string name="settings_about_title">Sobre o criador</string>
     <string name="settings_about_website">O meu site</string>
     <string name="settings_about_github">GitHub</string>
-    <string name="settings_about_footer">Feito por David Martins.</string>
+    <string name="settings_about_footer">Esta app foi criada por David Arsénio Martins.</string>
     <string name="settings_logout">Terminar sessão</string>
 
     <!-- Compare -->
