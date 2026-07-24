@@ -12,6 +12,7 @@ import dev.ividi.weatherapp.data.model.MarineResponse
 import dev.ividi.weatherapp.data.model.RefreshRequest
 import dev.ividi.weatherapp.data.model.RegisterRequest
 import dev.ividi.weatherapp.data.model.UnitsPreference
+import dev.ividi.weatherapp.data.model.WeatherInsightsResponse
 import dev.ividi.weatherapp.data.model.WeatherResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -52,6 +53,12 @@ interface WeatherApiService {
         @Query("city") city: String,
         @Query("units") units: String? = null,
     ): MarineResponse
+
+    @GET("api/v1/weather/insights")
+    suspend fun getInsights(
+        @Query("city") city: String,
+        @Query("units") units: String? = null,
+    ): WeatherInsightsResponse
 
     @GET("api/v1/weather/compare")
     suspend fun compareProviders(

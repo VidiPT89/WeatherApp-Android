@@ -42,12 +42,43 @@
 
     <!-- Sea conditions (marine) -->
     <string name="marine_title">Condições marítimas</string>
-    <string name="marine_subtitle">Temperatura da água e ondulação — não inclui marés altas/baixas.</string>
+    <string name="marine_subtitle">Temperatura da água, ondulação e estimativa de marés — não substitui uma tábua de marés oficial.</string>
     <string name="marine_water_temperature">Temp. da água</string>
     <string name="marine_wave_height">Altura das ondas</string>
     <string name="marine_wave_direction">Direção</string>
     <string name="marine_wave_period">Período</string>
+    <string name="marine_tides">Marés de hoje</string>
+    <string name="marine_tide_high">Alta</string>
+    <string name="marine_tide_low">Baixa</string>
     <string name="marine_unavailable">Sem dados marítimos para esta localização.</string>
+
+    <!-- Weather insights -->
+    <string name="insights_title">Mais sobre hoje</string>
+    <string name="insights_subtitle">Algumas estimativas extra com base nas condições de hoje.</string>
+    <string name="insights_moon_phase">Fase da lua</string>
+    <string name="insights_uv_risk">Risco UV</string>
+    <string name="insights_outdoor_activity">Atividades ao ar livre</string>
+    <string name="insights_fishing_conditions">Condições de pesca</string>
+    <string name="moon_phase_new_moon">Nova</string>
+    <string name="moon_phase_waxing_crescent">Crescente</string>
+    <string name="moon_phase_first_quarter">Quarto Crescente</string>
+    <string name="moon_phase_waxing_gibbous">Gibosa Crescente</string>
+    <string name="moon_phase_full_moon">Cheia</string>
+    <string name="moon_phase_waning_gibbous">Gibosa Minguante</string>
+    <string name="moon_phase_last_quarter">Quarto Minguante</string>
+    <string name="moon_phase_waning_crescent">Minguante</string>
+    <string name="uv_risk_low">Baixo</string>
+    <string name="uv_risk_moderate">Moderado</string>
+    <string name="uv_risk_high">Alto</string>
+    <string name="uv_risk_very_high">Muito Alto</string>
+    <string name="uv_risk_extreme">Extremo</string>
+    <string name="activity_great">Ótimo</string>
+    <string name="activity_good">Bom</string>
+    <string name="activity_fair">Razoável</string>
+    <string name="activity_poor">Fraco</string>
+    <string name="fishing_good">Boas</string>
+    <string name="fishing_fair">Razoáveis</string>
+    <string name="fishing_poor">Fracas</string>
 
     <!-- Settings -->
     <string name="settings_title">Definições</string>

@@ -42,12 +42,43 @@
 
     <!-- Sea conditions (marine) -->
     <string name="marine_title">Sea conditions</string>
-    <string name="marine_subtitle">Water temperature and swell — does not include tide times.</string>
+    <string name="marine_subtitle">Water temperature, swell and estimated tide times — not a substitute for an official tide table.</string>
     <string name="marine_water_temperature">Water temp.</string>
     <string name="marine_wave_height">Wave height</string>
     <string name="marine_wave_direction">Direction</string>
     <string name="marine_wave_period">Period</string>
+    <string name="marine_tides">Tides today</string>
+    <string name="marine_tide_high">High</string>
+    <string name="marine_tide_low">Low</string>
     <string name="marine_unavailable">No sea data available for this location.</string>
+
+    <!-- Weather insights -->
+    <string name="insights_title">More about today</string>
+    <string name="insights_subtitle">A few extra estimates based on today\'s conditions.</string>
+    <string name="insights_moon_phase">Moon phase</string>
+    <string name="insights_uv_risk">UV risk</string>
+    <string name="insights_outdoor_activity">Outdoor activity</string>
+    <string name="insights_fishing_conditions">Fishing conditions</string>
+    <string name="moon_phase_new_moon">New</string>
+    <string name="moon_phase_waxing_crescent">Waxing Crescent</string>
+    <string name="moon_phase_first_quarter">First Quarter</string>
+    <string name="moon_phase_waxing_gibbous">Waxing Gibbous</string>
+    <string name="moon_phase_full_moon">Full</string>
+    <string name="moon_phase_waning_gibbous">Waning Gibbous</string>
+    <string name="moon_phase_last_quarter">Last Quarter</string>
+    <string name="moon_phase_waning_crescent">Waning Crescent</string>
+    <string name="uv_risk_low">Low</string>
+    <string name="uv_risk_moderate">Moderate</string>
+    <string name="uv_risk_high">High</string>
+    <string name="uv_risk_very_high">Very High</string>
+    <string name="uv_risk_extreme">Extreme</string>
+    <string name="activity_great">Great</string>
+    <string name="activity_good">Good</string>
+    <string name="activity_fair">Fair</string>
+    <string name="activity_poor">Poor</string>
+    <string name="fishing_good">Good</string>
+    <string name="fishing_fair">Fair</string>
+    <string name="fishing_poor">Poor</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

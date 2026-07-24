@@ -8,9 +8,11 @@ import dev.ividi.weatherapp.data.model.ForecastResponse
 import dev.ividi.weatherapp.data.model.GeocodingResult
 import dev.ividi.weatherapp.data.model.MarineResponse
 import dev.ividi.weatherapp.data.model.Units
+import dev.ividi.weatherapp.data.model.WeatherInsightsResponse
 import dev.ividi.weatherapp.data.model.WeatherResponse
 import dev.ividi.weatherapp.data.network.ApiException
 import dev.ividi.weatherapp.data.repository.GeocodingRepository
+import dev.ividi.weatherapp.data.repository.InsightsRepository
 import dev.ividi.weatherapp.data.repository.MarineRepository
 import dev.ividi.weatherapp.data.repository.PreferencesRepository
 import dev.ividi.weatherapp.data.repository.WeatherRepository
@@ -30,6 +32,7 @@ import kotlinx.coroutines.supervisorScope
 class DashboardViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val marineRepository: MarineRepository,
+    private val insightsRepository: InsightsRepository,
     private val geocodingRepository: GeocodingRepository,
     private val preferencesRepository: PreferencesRepository,
     private val errorMessageProvider: ErrorMessageProvider,
@@ -53,6 +56,9 @@ class DashboardViewModel @Inject constructor(
 
     private val _marineState = MutableStateFlow<UiState<MarineResponse>>(UiState.Empty)
     val marineState: StateFlow<UiState<MarineResponse>> = _marineState.asStateFlow()
+
+    private val _insightsState = MutableStateFlow<UiState<WeatherInsightsResponse>>(UiState.Empty)
+    val insightsState: StateFlow<UiState<WeatherInsightsResponse>> = _insightsState.asStateFlow()
 
     private val _selectedTab = MutableStateFlow(ForecastTab.HOURLY)
     val selectedTab: StateFlow<ForecastTab> = _selectedTab.asStateFlow()
@@ -116,18 +122,20 @@ class DashboardViewModel @Inject constructor(
         _weatherState.value = UiState.Loading
         _forecastState.value = UiState.Loading
         _marineState.value = UiState.Loading
+        _insightsState.value = UiState.Loading
 
         viewModelScope.launch {
             val unitsToUse = _units.value
             // supervisorScope is required here: plain `async` children of the same `launch`
             // propagate a failure to cancel their parent *and* siblings as soon as the child
             // fails -- independent of, and before, any `.await()` call -- so a 401/500 on just
-            // one of these three calls would crash the whole app instead of being caught by the
+            // one of these four calls would crash the whole app instead of being caught by the
             // per-await try/catch below. A supervisor isolates each child's failure instead.
             supervisorScope {
                 val weatherDeferred = async { weatherRepository.getWeather(city, unitsToUse) }
                 val forecastDeferred = async { weatherRepository.getForecast(city, unitsToUse) }
                 val marineDeferred = async { marineRepository.getMarine(city, unitsToUse) }
+                val insightsDeferred = async { insightsRepository.getInsights(city, unitsToUse) }
 
                 _weatherState.value = try {
                     UiState.Success(weatherDeferred.await())
@@ -143,6 +151,12 @@ class DashboardViewModel @Inject constructor(
 
                 _marineState.value = try {
                     UiState.Success(marineDeferred.await())
+                } catch (error: ApiException) {
+                    UiState.Error(errorMessageProvider.messageFor(error))
+                }
+
+                _insightsState.value = try {
+                    UiState.Success(insightsDeferred.await())
                 } catch (error: ApiException) {
                     UiState.Error(errorMessageProvider.messageFor(error))
                 }

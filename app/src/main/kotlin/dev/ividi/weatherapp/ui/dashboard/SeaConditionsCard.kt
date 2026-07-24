@@ -17,14 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.MarineResponse
+import dev.ividi.weatherapp.data.model.TideEvent
 import dev.ividi.weatherapp.data.model.Units
 import kotlin.math.roundToInt
 
 /**
- * "Sea conditions" card: water temperature and swell (wave height/direction/period) from the
- * `/marine` endpoint. Deliberately never surfaces tide (high/low) times -- the backend does not
- * provide them. When every field is null (inland/non-coastal city), this renders a graceful
- * "no data" message instead of treating the response as an error.
+ * "Sea conditions" card: water temperature, swell (wave height/direction/period) and estimated
+ * tide times from the `/marine` endpoint. When every sea-state field is null (inland/non-coastal
+ * city), this renders a graceful "no data" message instead of treating the response as an error.
  */
 @Composable
 fun SeaConditionsCard(marine: MarineResponse, modifier: Modifier = Modifier) {
@@ -76,9 +76,36 @@ fun SeaConditionsCard(marine: MarineResponse, modifier: Modifier = Modifier) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+
+            if (marine.tideEvents.isNotEmpty()) {
+                Column(modifier = Modifier.padding(top = 12.dp)) {
+                    Text(
+                        text = stringResource(R.string.marine_tides),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Row(
+                        modifier = Modifier.padding(top = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        marine.tideEvents.forEach { event ->
+                            Text(
+                                text = "${tideLabel(event)} ${formatTideTime(event.time)}",
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
+
+@Composable
+private fun tideLabel(event: TideEvent): String =
+    stringResource(if (event.isHigh) R.string.marine_tide_high else R.string.marine_tide_low)
+
+private fun formatTideTime(time: String): String = time.substringAfter("T", time)
 
 @Composable
 private fun SeaConditionDetail(label: String, value: String) {

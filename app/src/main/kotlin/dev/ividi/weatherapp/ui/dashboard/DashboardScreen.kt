@@ -43,6 +43,7 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     val weatherState by viewModel.weatherState.collectAsStateWithLifecycle()
     val forecastState by viewModel.forecastState.collectAsStateWithLifecycle()
     val marineState by viewModel.marineState.collectAsStateWithLifecycle()
+    val insightsState by viewModel.insightsState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
 
     LazyColumn(
@@ -117,6 +118,14 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
             AnimatedVisibility(visible = marineState is UiState.Success) {
                 (marineState as? UiState.Success)?.let { state ->
                     SeaConditionsCard(marine = state.data)
+                }
+            }
+        }
+
+        item {
+            AnimatedVisibility(visible = insightsState is UiState.Success) {
+                (insightsState as? UiState.Success)?.let { state ->
+                    WeatherInsightsCard(insights = state.data)
                 }
             }
         }
