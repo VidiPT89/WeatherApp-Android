@@ -4,7 +4,6 @@
 
     <!-- Bottom navigation -->
     <string name="nav_home">Início</string>
-    <string name="nav_compare">Comparar</string>
     <string name="nav_favorites">Favoritos</string>
     <string name="nav_history">Histórico</string>
     <string name="nav_settings">Definições</string>
@@ -98,13 +97,6 @@
     <string name="settings_about_github">GitHub</string>
     <string name="settings_about_footer">Esta app foi criada por David Arsénio Martins.</string>
     <string name="settings_logout">Terminar sessão</string>
-
-    <!-- Compare -->
-    <string name="compare_title">Comparar provedores</string>
-    <string name="compare_idle_prompt">Procure uma cidade para comparar os provedores.</string>
-    <string name="compare_average">Média entre provedores com sucesso: %1$s°</string>
-    <string name="compare_primary_suffix"> (principal)</string>
-    <string name="compare_unavailable">Provider indisponível</string>
 
     <!-- Favorites -->
     <string name="favorites_add_placeholder">Adicionar cidade</string>

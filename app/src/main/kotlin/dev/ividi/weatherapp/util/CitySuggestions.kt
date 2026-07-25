@@ -13,9 +13,9 @@ private const val SEARCH_DEBOUNCE_MS = 300L
 private const val MIN_QUERY_LENGTH = 2
 
 /**
- * Shared debounced-autocomplete pipeline used by every screen with a city search box
- * (Dashboard, Compare): waits [SEARCH_DEBOUNCE_MS], requires at least [MIN_QUERY_LENGTH]
- * characters, and cancels any in-flight lookup as soon as a newer query arrives.
+ * Shared debounced-autocomplete pipeline used by the Dashboard's city search box: waits
+ * [SEARCH_DEBOUNCE_MS], requires at least [MIN_QUERY_LENGTH] characters, and cancels any
+ * in-flight lookup as soon as a newer query arrives.
  */
 @OptIn(FlowPreview::class)
 fun citySuggestionsFlow(

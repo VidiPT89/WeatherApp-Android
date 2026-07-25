@@ -1,7 +1,6 @@
 package dev.ividi.weatherapp.data.network
 
 import dev.ividi.weatherapp.data.model.AuthResponse
-import dev.ividi.weatherapp.data.model.CompareResponse
 import dev.ividi.weatherapp.data.model.FavoriteEntry
 import dev.ividi.weatherapp.data.model.FavoriteRequest
 import dev.ividi.weatherapp.data.model.ForecastResponse
@@ -59,12 +58,6 @@ interface WeatherApiService {
         @Query("city") city: String,
         @Query("units") units: String? = null,
     ): WeatherInsightsResponse
-
-    @GET("api/v1/weather/compare")
-    suspend fun compareProviders(
-        @Query("city") city: String,
-        @Query("units") units: String? = null,
-    ): CompareResponse
 
     @GET("api/v1/weather/history")
     suspend fun getHistory(): List<HistoryEntry>

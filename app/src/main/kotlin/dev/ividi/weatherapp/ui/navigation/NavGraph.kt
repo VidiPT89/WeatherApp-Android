@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import dev.ividi.weatherapp.ui.auth.AuthViewModel
 import dev.ividi.weatherapp.ui.auth.LoginScreen
 import dev.ividi.weatherapp.ui.auth.RegisterScreen
-import dev.ividi.weatherapp.ui.compare.CompareScreen
 import dev.ividi.weatherapp.ui.dashboard.DashboardScreen
 import dev.ividi.weatherapp.ui.favorites.FavoritesScreen
 import dev.ividi.weatherapp.ui.history.HistoryScreen
@@ -97,7 +96,6 @@ fun WeatherAppNavGraph() {
             ) {
                 DashboardScreen()
             }
-            composable(Screen.Compare.route) { CompareScreen() }
             composable(Screen.Favorites.route) {
                 FavoritesScreen(
                     onFavoriteSelected = { city ->

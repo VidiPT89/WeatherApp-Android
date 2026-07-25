@@ -4,7 +4,6 @@
 
     <!-- Bottom navigation -->
     <string name="nav_home">Home</string>
-    <string name="nav_compare">Compare</string>
     <string name="nav_favorites">Favorites</string>
     <string name="nav_history">History</string>
     <string name="nav_settings">Settings</string>
@@ -98,13 +97,6 @@
     <string name="settings_about_github">GitHub</string>
     <string name="settings_about_footer">This app was made by David Arsénio Martins.</string>
     <string name="settings_logout">Log out</string>
-
-    <!-- Compare -->
-    <string name="compare_title">Compare providers</string>
-    <string name="compare_idle_prompt">Search for a city to compare providers.</string>
-    <string name="compare_average">Average across successful providers: %1$s°</string>
-    <string name="compare_primary_suffix"> (primary)</string>
-    <string name="compare_unavailable">Provider unavailable</string>
 
     <!-- Favorites -->
     <string name="favorites_add_placeholder">Add a city</string>
