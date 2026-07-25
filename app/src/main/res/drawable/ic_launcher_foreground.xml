@@ -3,26 +3,39 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <!-- Sunburst rays -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#F7B733"
+        android:strokeWidth="58"
+        android:strokeLineCap="round"
+        android:pathData="M352,242 L292,182 M672,242 L732,182 M352,558 L292,618 M672,558 L732,618" />
     <!-- Sun -->
-    <path android:pathData="M82,40a16,16 0 1 1,-32,0a16,16 0 1 1,32,0Z">
+    <path android:pathData="M364,400a148,148 0 1 1,296 0a148,148 0 1 1,-296 0Z">
         <aapt:attr name="android:fillColor">
             <gradient
                 android:type="linear"
-                android:startX="40"
-                android:startY="20"
-                android:endX="80"
-                android:endY="60"
+                android:startX="380"
+                android:startY="240"
+                android:endX="660"
+                android:endY="560"
                 android:startColor="#FDE68A"
                 android:endColor="#F59E0B" />
         </aapt:attr>
     </path>
-    <!-- Cloud (kept within the ~66dp adaptive-icon safe zone) -->
+    <!-- Sea, layered with decreasing opacity for depth -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M50,57a12,12 0 1 1,-24,0a12,12 0 1 1,24,0Z
-                           M70,49a16,16 0 1 1,-32,0a16,16 0 1 1,32,0Z
-                           M79,57a12,12 0 1 1,-24,0a12,12 0 1 1,24,0Z
-                           M38.5,57 H67.5 A10.5,10.5 0 0 1 67.5,78 H38.5 A10.5,10.5 0 0 1 38.5,57 Z" />
+        android:fillAlpha="0.95"
+        android:pathData="M -40,676 C144,624 288,624 472,676 C656,728 800,728 984,676 L1064,676 L1064,760 L-40,760 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.65"
+        android:pathData="M -40,772 C144,720 288,720 472,772 C656,824 800,824 984,772 L1064,772 L1064,860 L-40,860 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.4"
+        android:pathData="M -40,868 C144,816 288,816 472,868 C656,920 800,920 984,868 L1064,868 L1064,1024 L-40,1024 Z" />
 </vector>
