@@ -94,6 +94,11 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                 is UiState.Success -> {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(text = stringResource(R.string.forecast_title), style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            text = stringResource(R.string.forecast_air_temperature_caption),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                         ForecastTabRow(selectedTab = selectedTab, onTabSelected = viewModel::onTabSelected)
                         AnimatedContent(
                             targetState = selectedTab,
@@ -101,8 +106,8 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                             transitionSpec = { fadeIn() togetherWith fadeOut() },
                         ) { tab ->
                             when (tab) {
-                                ForecastTab.HOURLY -> HourlyLineChart(entries = state.data.hourly)
-                                ForecastTab.DAILY -> DailyBarChart(entries = state.data.daily)
+                                ForecastTab.HOURLY -> HourlyLineChart(entries = state.data.hourly, units = state.data.units)
+                                ForecastTab.DAILY -> DailyBarChart(entries = state.data.daily, units = state.data.units)
                             }
                         }
                     }

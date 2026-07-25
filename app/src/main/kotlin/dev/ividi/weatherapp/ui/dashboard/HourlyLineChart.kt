@@ -2,11 +2,13 @@ package dev.ividi.weatherapp.ui.dashboard
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +21,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import dev.ividi.weatherapp.data.model.HourlyForecastEntry
+import dev.ividi.weatherapp.data.model.Units
+import kotlin.math.roundToInt
 
 private const val CHART_HEIGHT_DP = 200
 private const val VERTICAL_PADDING_DP = 16
@@ -36,7 +40,7 @@ private const val HOUR_LABEL_STEP = 3
  * probability bar is drawn beneath the temperature line for each point.
  */
 @Composable
-fun HourlyLineChart(entries: List<HourlyForecastEntry>, modifier: Modifier = Modifier) {
+fun HourlyLineChart(entries: List<HourlyForecastEntry>, units: Units, modifier: Modifier = Modifier) {
     if (entries.isEmpty()) return
 
     val lineColor = MaterialTheme.colorScheme.primary
@@ -50,67 +54,77 @@ fun HourlyLineChart(entries: List<HourlyForecastEntry>, modifier: Modifier = Mod
 
     val chartWidth = remember(entries.size) { (HOUR_SLOT_WIDTH_DP * entries.size).dp }
 
-    Column(modifier = modifier.fillMaxWidth().horizontalScroll(scrollState)) {
-        Canvas(
-            modifier = Modifier
-                .width(chartWidth)
-                .height(CHART_HEIGHT_DP.dp),
+    Row(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.height(CHART_HEIGHT_DP.dp).padding(end = 4.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            val verticalPadding = VERTICAL_PADDING_DP.dp.toPx()
-            val slotWidth = size.width / entries.size
-            val chartHeight = size.height - verticalPadding * 2
-            val precipitationBarMaxHeight = PRECIPITATION_BAR_MAX_HEIGHT_DP.dp.toPx()
-
-            drawLine(
-                color = gridColor,
-                start = Offset(0f, size.height - verticalPadding),
-                end = Offset(size.width, size.height - verticalPadding),
-                strokeWidth = 1.dp.toPx(),
-            )
-
-            entries.forEachIndexed { index, entry ->
-                val barHeight = precipitationBarMaxHeight * (entry.precipitationProbability / 100f)
-                val slotCenterX = slotWidth * index + slotWidth / 2
-                drawRect(
-                    color = precipitationColor,
-                    topLeft = Offset(
-                        slotCenterX - slotWidth * 0.3f,
-                        size.height - verticalPadding - barHeight,
-                    ),
-                    size = androidx.compose.ui.geometry.Size(slotWidth * 0.6f, barHeight),
-                )
-            }
-
-            val points = entries.mapIndexed { index, entry ->
-                val normalizedY = ((entry.temperature - minTemp) / tempRange).toFloat()
-                val x = slotWidth * index + slotWidth / 2
-                val y = verticalPadding + chartHeight * (1f - normalizedY)
-                Offset(x, y)
-            }
-
-            for (i in 0 until points.size - 1) {
-                drawLine(
-                    color = lineColor,
-                    start = points[i],
-                    end = points[i + 1],
-                    strokeWidth = STROKE_WIDTH_DP.dp.toPx(),
-                    cap = StrokeCap.Round,
-                )
-            }
-
-            points.forEach { point ->
-                drawCircle(color = lineColor, radius = POINT_RADIUS_DP.dp.toPx(), center = point)
-            }
+            Text(text = "${maxTemp.roundToInt()}${units.temperatureSymbol}", style = MaterialTheme.typography.labelSmall)
+            Text(text = "${minTemp.roundToInt()}${units.temperatureSymbol}", style = MaterialTheme.typography.labelSmall)
         }
 
-        Row(modifier = Modifier.width(chartWidth)) {
-            entries.forEachIndexed { index, entry ->
-                Box(
-                    modifier = Modifier.width(HOUR_SLOT_WIDTH_DP.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    if (index % HOUR_LABEL_STEP == 0) {
-                        Text(text = hourLabel(entry), style = MaterialTheme.typography.labelSmall)
+        Column(modifier = Modifier.horizontalScroll(scrollState)) {
+            Canvas(
+                modifier = Modifier
+                    .width(chartWidth)
+                    .height(CHART_HEIGHT_DP.dp),
+            ) {
+                val verticalPadding = VERTICAL_PADDING_DP.dp.toPx()
+                val slotWidth = size.width / entries.size
+                val chartHeight = size.height - verticalPadding * 2
+                val precipitationBarMaxHeight = PRECIPITATION_BAR_MAX_HEIGHT_DP.dp.toPx()
+
+                drawLine(
+                    color = gridColor,
+                    start = Offset(0f, size.height - verticalPadding),
+                    end = Offset(size.width, size.height - verticalPadding),
+                    strokeWidth = 1.dp.toPx(),
+                )
+
+                entries.forEachIndexed { index, entry ->
+                    val barHeight = precipitationBarMaxHeight * (entry.precipitationProbability / 100f)
+                    val slotCenterX = slotWidth * index + slotWidth / 2
+                    drawRect(
+                        color = precipitationColor,
+                        topLeft = Offset(
+                            slotCenterX - slotWidth * 0.3f,
+                            size.height - verticalPadding - barHeight,
+                        ),
+                        size = androidx.compose.ui.geometry.Size(slotWidth * 0.6f, barHeight),
+                    )
+                }
+
+                val points = entries.mapIndexed { index, entry ->
+                    val normalizedY = ((entry.temperature - minTemp) / tempRange).toFloat()
+                    val x = slotWidth * index + slotWidth / 2
+                    val y = verticalPadding + chartHeight * (1f - normalizedY)
+                    Offset(x, y)
+                }
+
+                for (i in 0 until points.size - 1) {
+                    drawLine(
+                        color = lineColor,
+                        start = points[i],
+                        end = points[i + 1],
+                        strokeWidth = STROKE_WIDTH_DP.dp.toPx(),
+                        cap = StrokeCap.Round,
+                    )
+                }
+
+                points.forEach { point ->
+                    drawCircle(color = lineColor, radius = POINT_RADIUS_DP.dp.toPx(), center = point)
+                }
+            }
+
+            Row(modifier = Modifier.width(chartWidth)) {
+                entries.forEachIndexed { index, entry ->
+                    Box(
+                        modifier = Modifier.width(HOUR_SLOT_WIDTH_DP.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        if (index % HOUR_LABEL_STEP == 0) {
+                            Text(text = hourLabel(entry), style = MaterialTheme.typography.labelSmall)
+                        }
                     }
                 }
             }

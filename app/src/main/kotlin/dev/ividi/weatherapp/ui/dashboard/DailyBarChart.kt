@@ -2,11 +2,13 @@ package dev.ividi.weatherapp.ui.dashboard
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,8 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.DailyForecastEntry
+import dev.ividi.weatherapp.data.model.Units
+import kotlin.math.roundToInt
 
 private const val CHART_HEIGHT_DP = 200
 private const val VERTICAL_PADDING_DP = 16
@@ -33,7 +37,7 @@ private const val BAR_WIDTH_FRACTION = 0.4f
  * past one screen width; it scrolls horizontally rather than truncating or squeezing the data.
  */
 @Composable
-fun DailyBarChart(entries: List<DailyForecastEntry>, modifier: Modifier = Modifier) {
+fun DailyBarChart(entries: List<DailyForecastEntry>, units: Units, modifier: Modifier = Modifier) {
     if (entries.isEmpty()) return
 
     val maxBarColor = MaterialTheme.colorScheme.primary
@@ -47,46 +51,56 @@ fun DailyBarChart(entries: List<DailyForecastEntry>, modifier: Modifier = Modifi
 
     val chartWidth = remember(entries.size) { (DAY_SLOT_WIDTH_DP * entries.size).dp }
 
-    Column(modifier = modifier.fillMaxWidth().horizontalScroll(scrollState)) {
-        Canvas(
-            modifier = Modifier
-                .width(chartWidth)
-                .height(CHART_HEIGHT_DP.dp),
+    Row(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.height(CHART_HEIGHT_DP.dp).padding(end = 4.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            val verticalPadding = VERTICAL_PADDING_DP.dp.toPx()
-            val slotWidth = size.width / entries.size
-            val chartHeight = size.height - verticalPadding * 2
-            val barWidth = slotWidth * BAR_WIDTH_FRACTION
-
-            entries.forEachIndexed { index, entry ->
-                val slotCenterX = slotWidth * index + slotWidth / 2
-
-                val topNormalized = ((entry.temperatureMax - overallMin) / tempRange).toFloat()
-                val bottomNormalized = ((entry.temperatureMin - overallMin) / tempRange).toFloat()
-
-                val topY = verticalPadding + chartHeight * (1f - topNormalized)
-                val bottomY = verticalPadding + chartHeight * (1f - bottomNormalized)
-
-                drawRect(
-                    color = maxBarColor,
-                    topLeft = Offset(slotCenterX - barWidth / 2, topY),
-                    size = Size(barWidth, (bottomY - topY).coerceAtLeast(4f)),
-                )
-                drawCircle(
-                    color = minBarColor,
-                    radius = 4.dp.toPx(),
-                    center = Offset(slotCenterX, bottomY),
-                )
-            }
+            Text(text = "${overallMax.roundToInt()}${units.temperatureSymbol}", style = MaterialTheme.typography.labelSmall)
+            Text(text = "${overallMin.roundToInt()}${units.temperatureSymbol}", style = MaterialTheme.typography.labelSmall)
         }
 
-        Row(modifier = Modifier.width(chartWidth)) {
-            entries.forEach { entry ->
-                Box(
-                    modifier = Modifier.width(DAY_SLOT_WIDTH_DP.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(text = dayLabel(entry, dayLabels), style = MaterialTheme.typography.labelLarge)
+        Column(modifier = Modifier.horizontalScroll(scrollState)) {
+            Canvas(
+                modifier = Modifier
+                    .width(chartWidth)
+                    .height(CHART_HEIGHT_DP.dp),
+            ) {
+                val verticalPadding = VERTICAL_PADDING_DP.dp.toPx()
+                val slotWidth = size.width / entries.size
+                val chartHeight = size.height - verticalPadding * 2
+                val barWidth = slotWidth * BAR_WIDTH_FRACTION
+
+                entries.forEachIndexed { index, entry ->
+                    val slotCenterX = slotWidth * index + slotWidth / 2
+
+                    val topNormalized = ((entry.temperatureMax - overallMin) / tempRange).toFloat()
+                    val bottomNormalized = ((entry.temperatureMin - overallMin) / tempRange).toFloat()
+
+                    val topY = verticalPadding + chartHeight * (1f - topNormalized)
+                    val bottomY = verticalPadding + chartHeight * (1f - bottomNormalized)
+
+                    drawRect(
+                        color = maxBarColor,
+                        topLeft = Offset(slotCenterX - barWidth / 2, topY),
+                        size = Size(barWidth, (bottomY - topY).coerceAtLeast(4f)),
+                    )
+                    drawCircle(
+                        color = minBarColor,
+                        radius = 4.dp.toPx(),
+                        center = Offset(slotCenterX, bottomY),
+                    )
+                }
+            }
+
+            Row(modifier = Modifier.width(chartWidth)) {
+                entries.forEach { entry ->
+                    Box(
+                        modifier = Modifier.width(DAY_SLOT_WIDTH_DP.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(text = dayLabel(entry, dayLabels), style = MaterialTheme.typography.labelLarge)
+                    }
                 }
             }
         }

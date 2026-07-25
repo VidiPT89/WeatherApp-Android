@@ -35,6 +35,7 @@
 
     <!-- Forecast -->
     <string name="forecast_title">Previsão</string>
+    <string name="forecast_air_temperature_caption">Temperatura do ar</string>
     <string name="forecast_hourly_tab">Horária</string>
     <string name="forecast_daily_tab">Diária</string>
     <string name="forecast_max">Máx</string>
