@@ -198,7 +198,7 @@ private fun temperatureColor(value: Double, min: Double, max: Double): Color {
     )
 }
 
-private fun dayLabel(entry: DailyForecastEntry, labels: Array<String>): String {
+internal fun dayLabel(entry: DailyForecastEntry, labels: Array<String>): String {
     val mondayFirstIndex = entry.date.dayOfWeek.value - 1
     return labels.getOrElse(mondayFirstIndex) { "" }
 }

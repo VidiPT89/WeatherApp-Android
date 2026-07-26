@@ -86,6 +86,10 @@
     <string name="fishing_good">Boas</string>
     <string name="fishing_fair">Razoáveis</string>
     <string name="fishing_poor">Fracas</string>
+    <string name="surf_good">Bom</string>
+    <string name="surf_fair">Razoável</string>
+    <string name="surf_poor">Fraco</string>
+    <string name="daily_insight_rain_chance">%1$d%% chuva</string>
 
     <!-- Settings -->
     <string name="settings_title">Definições</string>

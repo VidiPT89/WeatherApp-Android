@@ -32,6 +32,9 @@ data class HourlyForecastEntry(
 /**
  * [sunrise]/[sunset] are local ISO datetimes with no timezone offset (same wire shape as
  * [HourlyForecastEntry.time]), so they are parsed as [LocalDateTime], never as an [Instant].
+ *
+ * [waveHeightMax], [wavePeriodMax], [fishingConditionLabel] and [surfConditionLabel] are `null`
+ * for cities without marine data (backend only computes them when a marine forecast exists).
  */
 @Serializable
 data class DailyForecastEntry(
@@ -43,4 +46,12 @@ data class DailyForecastEntry(
     val sunset: LocalDateTime,
     val uvIndexMax: Double,
     val precipitationProbabilityMax: Int,
+    val windSpeedMax: Double,
+    val rainLikely: Boolean,
+    val uvRiskLabel: String,
+    val outdoorActivityLabel: String,
+    val waveHeightMax: Double? = null,
+    val wavePeriodMax: Double? = null,
+    val fishingConditionLabel: String? = null,
+    val surfConditionLabel: String? = null,
 )

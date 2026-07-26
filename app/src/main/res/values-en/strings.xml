@@ -86,6 +86,10 @@
     <string name="fishing_good">Good</string>
     <string name="fishing_fair">Fair</string>
     <string name="fishing_poor">Poor</string>
+    <string name="surf_good">Good</string>
+    <string name="surf_fair">Fair</string>
+    <string name="surf_poor">Poor</string>
+    <string name="daily_insight_rain_chance">%1$d%% rain</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

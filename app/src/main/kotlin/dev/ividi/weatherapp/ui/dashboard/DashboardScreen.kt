@@ -135,7 +135,10 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                         ) { tab ->
                             when (tab) {
                                 ForecastTab.HOURLY -> HourlyLineChart(entries = state.data.hourly, units = state.data.units)
-                                ForecastTab.DAILY -> DailyBarChart(entries = state.data.daily, units = state.data.units)
+                                ForecastTab.DAILY -> Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                    DailyBarChart(entries = state.data.daily, units = state.data.units)
+                                    DailyInsightList(entries = state.data.daily)
+                                }
                             }
                         }
                     }
