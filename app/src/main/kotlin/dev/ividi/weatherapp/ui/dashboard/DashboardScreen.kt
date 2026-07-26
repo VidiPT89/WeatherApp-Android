@@ -1,5 +1,9 @@
 package dev.ividi.weatherapp.ui.dashboard
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -18,11 +22,14 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.ividi.weatherapp.R
@@ -44,6 +51,24 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     val marineState by viewModel.marineState.collectAsStateWithLifecycle()
     val insightsState by viewModel.insightsState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
+    val isLocating by viewModel.isLocating.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted -> if (granted) viewModel.loadNearbyWeather() }
+
+    LaunchedEffect(Unit) {
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_COARSE_LOCATION,
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            viewModel.loadNearbyWeather()
+        } else {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -73,7 +98,10 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
             ) { state ->
                 when (state) {
-                    is UiState.Empty -> EmptyStateMessage(stringResource(R.string.dashboard_idle_prompt))
+                    is UiState.Empty -> EmptyStateMessage(
+                        if (isLocating) stringResource(R.string.dashboard_locating)
+                        else stringResource(R.string.dashboard_idle_prompt),
+                    )
                     is UiState.Loading -> WeatherCardSkeleton()
                     is UiState.Error -> ErrorStateMessage(state.message)
                     is UiState.Success -> {

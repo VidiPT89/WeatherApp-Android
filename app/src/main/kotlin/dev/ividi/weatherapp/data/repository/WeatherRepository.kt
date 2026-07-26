@@ -20,6 +20,11 @@ class WeatherRepository @Inject constructor(
         apiService.getWeather(city = city, units = units?.wireValue)
     }
 
+    suspend fun getWeatherNearby(latitude: Double, longitude: Double, units: Units?): WeatherResponse =
+        safeApiCall(json) {
+            apiService.getWeatherNearby(lat = latitude, lon = longitude, units = units?.wireValue)
+        }
+
     suspend fun getForecast(city: String, units: Units?): ForecastResponse = safeApiCall(json) {
         apiService.getForecast(city = city, units = units?.wireValue)
     }

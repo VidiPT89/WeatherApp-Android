@@ -41,6 +41,13 @@ interface WeatherApiService {
         @Query("units") units: String? = null,
     ): WeatherResponse
 
+    @GET("api/v1/weather/nearby")
+    suspend fun getWeatherNearby(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("units") units: String? = null,
+    ): WeatherResponse
+
     @GET("api/v1/weather/forecast")
     suspend fun getForecast(
         @Query("city") city: String,

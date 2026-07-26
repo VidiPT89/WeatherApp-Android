@@ -13,6 +13,7 @@
 
     <!-- Dashboard -->
     <string name="dashboard_idle_prompt">Procure uma cidade para ver o tempo atual e a previsão.</string>
+    <string name="dashboard_locating">A localizar-te…</string>
     <string name="dashboard_loading">A carregar…</string>
     <string name="units_label">Unidades: %1$s</string>
 

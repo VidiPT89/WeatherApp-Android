@@ -16,6 +16,7 @@ import dev.ividi.weatherapp.data.repository.InsightsRepository
 import dev.ividi.weatherapp.data.repository.MarineRepository
 import dev.ividi.weatherapp.data.repository.PreferencesRepository
 import dev.ividi.weatherapp.data.repository.WeatherRepository
+import dev.ividi.weatherapp.location.LocationService
 import dev.ividi.weatherapp.ui.common.UiState
 import dev.ividi.weatherapp.ui.navigation.Screen
 import dev.ividi.weatherapp.util.ErrorMessageProvider
@@ -36,6 +37,7 @@ class DashboardViewModel @Inject constructor(
     private val geocodingRepository: GeocodingRepository,
     private val preferencesRepository: PreferencesRepository,
     private val errorMessageProvider: ErrorMessageProvider,
+    private val locationService: LocationService,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -62,6 +64,10 @@ class DashboardViewModel @Inject constructor(
 
     private val _selectedTab = MutableStateFlow(ForecastTab.HOURLY)
     val selectedTab: StateFlow<ForecastTab> = _selectedTab.asStateFlow()
+
+    /** True only while attempting the initial auto-location lookup. */
+    private val _isLocating = MutableStateFlow(false)
+    val isLocating: StateFlow<Boolean> = _isLocating.asStateFlow()
 
     private var currentCity: String? = null
 
@@ -99,6 +105,28 @@ class DashboardViewModel @Inject constructor(
     fun onCitySelected(city: String) {
         _searchQuery.value = city
         loadWeather(city)
+    }
+
+    /**
+     * Auto-detects the user's location and loads its weather. Called once by the screen after
+     * location permission is confirmed granted. Fails silently (leaving the normal manual-search
+     * empty state) if no provider is enabled or the lookup fails -- this is a convenience, not a
+     * required flow.
+     */
+    fun loadNearbyWeather() {
+        if (currentCity != null) return
+
+        viewModelScope.launch {
+            _isLocating.value = true
+            val weather = runCatching {
+                val location = locationService.getCurrentLocation()
+                weatherRepository.getWeatherNearby(location.latitude, location.longitude, _units.value)
+            }.getOrNull()
+            _isLocating.value = false
+
+            // No location provider enabled or the lookup failed -- stay on the empty state.
+            weather?.let { onCitySelected(it.city) }
+        }
     }
 
     fun onTabSelected(tab: ForecastTab) {
