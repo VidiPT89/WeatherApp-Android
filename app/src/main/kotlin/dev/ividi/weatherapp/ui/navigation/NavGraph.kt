@@ -8,6 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -22,16 +25,31 @@ import androidx.compose.ui.res.stringResource
 import dev.ividi.weatherapp.ui.auth.AuthViewModel
 import dev.ividi.weatherapp.ui.auth.LoginScreen
 import dev.ividi.weatherapp.ui.auth.RegisterScreen
+import dev.ividi.weatherapp.ui.common.SplashScreen
 import dev.ividi.weatherapp.ui.dashboard.DashboardScreen
 import dev.ividi.weatherapp.ui.favorites.FavoritesScreen
 import dev.ividi.weatherapp.ui.history.HistoryScreen
 import dev.ividi.weatherapp.ui.settings.SettingsScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 
-/** Root graph: an auth flow (login/register) followed by the bottom-nav'd main app. */
+private const val SPLASH_MINIMUM_DURATION_MS = 1_400L
+
+/** Root graph: a branded splash, then an auth flow (login/register), then the bottom-nav'd main app. */
 @Composable
 fun WeatherAppNavGraph() {
+    var showSplash by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        delay(SPLASH_MINIMUM_DURATION_MS)
+        showSplash = false
+    }
+
+    if (showSplash) {
+        SplashScreen()
+        return
+    }
+
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsStateWithLifecycle()
