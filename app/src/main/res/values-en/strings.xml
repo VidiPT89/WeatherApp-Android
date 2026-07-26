@@ -42,6 +42,10 @@
     <string name="forecast_daily_tab">Daily</string>
     <string name="forecast_max">Max</string>
     <string name="forecast_min">Min</string>
+    <string name="forecast_today_label">Today</string>
+    <string name="forecast_now_label">Now: %1$s</string>
+    <string name="forecast_page_previous">Previous page</string>
+    <string name="forecast_page_next">Next page</string>
 
     <!-- Sea conditions (marine) -->
     <string name="marine_title">Sea conditions</string>
