@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="splash_tagline">Sol, marés e o que mais precisares de saber</string>
     <string name="splash_creator_credit">Criado por David Arsénio Martins</string>
     <string name="splash_creator_website">ividi.dev</string>
 
