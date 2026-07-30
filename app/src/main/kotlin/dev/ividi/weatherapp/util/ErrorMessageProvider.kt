@@ -40,6 +40,7 @@ class ErrorMessageProvider @Inject constructor(
         ErrorCode.INVALID_REFRESH_TOKEN -> R.string.error_invalid_refresh_token
         ErrorCode.FAVORITE_ALREADY_EXISTS -> R.string.error_favorite_already_exists
         ErrorCode.FAVORITE_NOT_FOUND -> R.string.error_favorite_not_found
+        ErrorCode.SEARCH_HISTORY_ENTRY_NOT_FOUND -> R.string.error_search_history_entry_not_found
         ErrorCode.USER_NOT_FOUND -> R.string.error_user_not_found
         ErrorCode.CONFLICT -> R.string.error_conflict
         ErrorCode.UNAUTHENTICATED -> R.string.error_unauthenticated

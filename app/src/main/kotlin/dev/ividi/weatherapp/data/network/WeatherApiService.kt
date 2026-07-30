@@ -72,6 +72,14 @@ interface WeatherApiService {
     @GET("api/v1/weather/history")
     suspend fun getHistory(): List<HistoryEntry>
 
+    /** `Response<Unit>` (not a bare suspend return) so the 204 body is never decoded. */
+    @DELETE("api/v1/weather/history/{id}")
+    suspend fun deleteHistoryEntry(@Path("id") id: Long): Response<Unit>
+
+    /** `Response<Unit>` (not a bare suspend return) so the 204 body is never decoded. */
+    @DELETE("api/v1/weather/history")
+    suspend fun clearHistory(): Response<Unit>
+
     @GET("api/v1/weather/favorites")
     suspend fun getFavorites(): List<FavoriteEntry>
 

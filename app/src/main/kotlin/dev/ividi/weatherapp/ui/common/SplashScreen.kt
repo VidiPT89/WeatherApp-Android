@@ -40,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.ividi.weatherapp.R
 import kotlin.math.sin
-import kotlinx.coroutines.delay
 
 private const val LOGO_ENTRANCE_DURATION_MS = 550
 private const val TEXT_ENTRANCE_DELAY_MS = 250L

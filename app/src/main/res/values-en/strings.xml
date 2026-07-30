@@ -130,6 +130,12 @@
     <!-- History -->
     <string name="history_title">Search history</string>
     <string name="history_empty">You haven\'t searched for a city yet.</string>
+    <string name="history_remove_action">Remove %1$s from history</string>
+    <string name="history_clear_all_action">Clear all</string>
+    <string name="history_clear_confirm_title">Clear history?</string>
+    <string name="history_clear_confirm_message">This permanently removes all of your search history. This action cannot be undone.</string>
+    <string name="history_clear_confirm_confirm">Clear history</string>
+    <string name="history_clear_confirm_cancel">Cancel</string>
 
     <!-- Auth -->
     <string name="auth_login_subtitle">Sign in to your account to continue</string>
@@ -156,6 +162,7 @@
     <string name="error_favorite_already_exists">This city is already in your favorites.</string>
     <string name="error_favorite_not_found">This city is no longer in your favorites.</string>
     <string name="error_user_not_found">We couldn\'t find that account.</string>
+    <string name="error_search_history_entry_not_found">This search is no longer in your history.</string>
     <string name="error_conflict">Could not complete the request due to a conflict with existing data.</string>
     <string name="error_unauthenticated">Your session has expired. Please sign in again.</string>
     <string name="error_access_denied">You don\'t have permission to access this resource.</string>
