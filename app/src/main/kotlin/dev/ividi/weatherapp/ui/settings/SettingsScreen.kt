@@ -18,6 +18,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,11 +39,14 @@ private const val GITHUB_URL = "https://github.com/VidiPT89"
 @Composable
 fun SettingsScreen(
     onLoggedOut: () -> Unit,
+    onNavigateToAdmin: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val preferencesState by viewModel.preferencesState.collectAsStateWithLifecycle()
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
     val language by viewModel.language.collectAsStateWithLifecycle()
+    val updateUnitsError by viewModel.updateUnitsError.collectAsStateWithLifecycle()
+    val isAdmin by viewModel.isAdmin.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -72,6 +76,14 @@ fun SettingsScreen(
                         }
                     }
                 }
+            }
+        }
+
+        updateUnitsError?.let { message ->
+            Text(text = message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+            LaunchedEffect(message) {
+                kotlinx.coroutines.delay(3_000)
+                viewModel.consumeUpdateUnitsError()
             }
         }
 
@@ -114,6 +126,15 @@ fun SettingsScreen(
                             },
                         )
                     }
+                }
+            }
+        }
+
+        if (isAdmin) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(text = stringResource(R.string.settings_admin_title), style = MaterialTheme.typography.titleMedium)
+                OutlinedButton(onClick = onNavigateToAdmin) {
+                    Text(stringResource(R.string.settings_admin_button))
                 }
             }
         }

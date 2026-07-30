@@ -11,12 +11,15 @@ import dev.ividi.weatherapp.data.model.MarineResponse
 import dev.ividi.weatherapp.data.model.RefreshRequest
 import dev.ividi.weatherapp.data.model.RegisterRequest
 import dev.ividi.weatherapp.data.model.UnitsPreference
+import dev.ividi.weatherapp.data.model.UserAccount
 import dev.ividi.weatherapp.data.model.WeatherInsightsResponse
 import dev.ividi.weatherapp.data.model.WeatherResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /** Retrofit description of every backend endpoint consumed by the app. */
@@ -75,6 +78,10 @@ interface WeatherApiService {
     @POST("api/v1/weather/favorites")
     suspend fun addFavorite(@Body request: FavoriteRequest): FavoriteEntry
 
+    /** `Response<Unit>` (not a bare suspend return) so the 204 body is never decoded. */
+    @DELETE("api/v1/weather/favorites")
+    suspend fun removeFavorite(@Query("city") city: String): Response<Unit>
+
     @GET("api/v1/user/preferences")
     suspend fun getPreferences(): UnitsPreference
 
@@ -86,4 +93,16 @@ interface WeatherApiService {
         @Query("query") query: String,
         @Query("limit") limit: Int = 5,
     ): GeocodingResponse
+
+    /** The caller's own account, including their role -- used to gate the admin entry point. */
+    @GET("api/v1/user/me")
+    suspend fun getCurrentUser(): UserAccount
+
+    /** Admin-only: every registered account. Enforced server-side; hidden client-side otherwise. */
+    @GET("api/v1/admin/users")
+    suspend fun listUsers(): List<UserAccount>
+
+    /** Admin-only: deletes one account. The backend refuses self-delete with a 400. */
+    @DELETE("api/v1/admin/users/{id}")
+    suspend fun deleteUser(@Path("id") id: Long): Response<Unit>
 }

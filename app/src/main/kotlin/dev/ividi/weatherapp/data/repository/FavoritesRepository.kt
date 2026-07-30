@@ -4,6 +4,7 @@ import dev.ividi.weatherapp.data.model.FavoriteEntry
 import dev.ividi.weatherapp.data.model.FavoriteRequest
 import dev.ividi.weatherapp.data.network.WeatherApiService
 import dev.ividi.weatherapp.data.network.safeApiCall
+import dev.ividi.weatherapp.data.network.throwIfUnsuccessful
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
@@ -20,5 +21,9 @@ class FavoritesRepository @Inject constructor(
 
     suspend fun addFavorite(city: String): FavoriteEntry = safeApiCall(json) {
         apiService.addFavorite(FavoriteRequest(city = city))
+    }
+
+    suspend fun removeFavorite(city: String) = safeApiCall(json) {
+        apiService.removeFavorite(city).throwIfUnsuccessful()
     }
 }

@@ -12,8 +12,8 @@ One of three clients (Web / iOS / Android) built on top of the same backend. Thi
 - 🌡️ Current weather + hourly/daily forecast chart (hand-rolled Canvas line/bar charts), with a °C/°F toggle
 - ⚡ **Cache badge** — "dados frescos" vs "servido da cache há Xs", ticking live from the response's `fromCache` flag and timestamp
 - 🔁 **Fallback banner** — appears when the response was served by the secondary provider
-- ⚖️ **Provider comparison screen** — the same city, side by side, across every configured provider, with a computed average
-- 🔐 Auth (register/login, JWT in `EncryptedSharedPreferences`), favorite cities, search history, saved unit preference
+- 🔐 Auth (register/login, JWT in `EncryptedSharedPreferences`), favorite cities (add/remove), search history, saved unit preference
+- 🛡️ **Admin dashboard** — admin accounts get a "Administração" entry in Settings listing every registered account (email, role, joined date) with a per-row delete action (self-delete hidden client-side, refused server-side too)
 - ✅ Loading, error and empty states throughout
 
 ## 🛠️ Tech Stack
@@ -45,7 +45,7 @@ app/src/main/kotlin/dev/ividi/weatherapp/
 │   └── auth/          # EncryptedSharedPreferences-backed token storage
 ├── ui/                # one ViewModel (StateFlow) + Composable screen per feature:
 │                       # auth, dashboard (search, weather card, cache badge, fallback banner, forecast chart),
-│                       # favorites, history, compare, settings
+│                       # favorites, history, settings, admin (user management, admin-only)
 └── di/                 # Hilt modules
 ```
 
@@ -77,15 +77,16 @@ The app's base URL is `http://10.0.2.2:8080` (the emulator's alias for the host 
 ./gradlew test
 ```
 
-- JSON parsing fixtures for `WeatherResponse`/`ForecastResponse` (pinning the local-datetime hourly/daily parsing), `CompareResponse`, `Units`.
-- `MockWebServer`-backed test of the API client's error-body parsing (non-2xx → typed `ApiException` carrying the backend's `message`).
-- Pure-function unit tests for cache-age formatting, fallback-provider detection, and the cross-provider average-temperature calculation.
+- JSON parsing fixtures for `WeatherResponse`/`ForecastResponse` (pinning the local-datetime hourly/daily parsing), `WeatherInsightsResponse`/`MarineResponse`, `UserAccount`, `Units`.
+- `MockWebServer`-backed test of the API client's error-body parsing (non-2xx → typed `ApiException` carrying the backend's `message`) and token-refresh/retry behavior.
+- ViewModel tests for the admin user list/delete/error paths.
+- Pure-function unit tests for cache-age formatting and fallback-provider detection.
 
 Given the project's scope (three client apps on one backend), test effort is weighted toward parsing/business-logic rather than Compose UI layout.
 
 ## 📝 Notes
 
-- No delete-favorite/clear-history UI — matches the backend's intentional v1 scope (no delete endpoints exist yet).
+- No clear-history UI — matches the backend's intentional v1 scope (no clear-history endpoint exists yet).
 - Requires the backend reachable at `http://10.0.2.2:8080` from the emulator; on a physical device, point it at the host machine's LAN IP instead.
 
 ## 📄 License

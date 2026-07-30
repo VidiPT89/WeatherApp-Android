@@ -38,6 +38,14 @@ class AuthViewModel @Inject constructor(
             initialValue = authRepository.isLoggedInNow,
         )
 
+    init {
+        // Session restore: the app was reopened with a still-valid token, so there was no
+        // login()/register() call in this process to have already fetched the account/role.
+        if (authRepository.isLoggedInNow) {
+            viewModelScope.launch { authRepository.refreshCurrentUser() }
+        }
+    }
+
     fun register(email: String, password: String) {
         validateCredentials(email, password)?.let { validationError ->
             _uiState.value = UiState.Error(validationError)

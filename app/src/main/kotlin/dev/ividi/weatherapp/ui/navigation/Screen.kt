@@ -22,6 +22,7 @@ sealed class Screen(val route: String) {
     data object Favorites : Screen("favorites")
     data object History : Screen("history")
     data object Settings : Screen("settings")
+    data object Admin : Screen("admin")
 }
 
 /** The four destinations shown in the bottom navigation bar once the user is logged in. */

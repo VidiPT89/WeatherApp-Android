@@ -12,8 +12,11 @@ import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 
 class LocationUnavailableException : Exception("Não foi possível obter a localização.")
+
+private const val LOCATION_TIMEOUT_MS = 10_000L
 
 /**
  * One-shot location fix via the platform LocationManager (no Play Services dependency, since
@@ -23,8 +26,16 @@ class LocationUnavailableException : Exception("Não foi possível obter a local
 @Singleton
 class LocationService @Inject constructor(@ApplicationContext private val context: Context) {
 
+    /**
+     * Resolves within [LOCATION_TIMEOUT_MS], throwing [LocationUnavailableException] if no fix
+     * arrives in time -- e.g. a provider that's enabled but never actually produces a location
+     * (common on emulators with no injected location), which would otherwise hang forever.
+     */
+    suspend fun getCurrentLocation(): Location =
+        withTimeoutOrNull(LOCATION_TIMEOUT_MS) { awaitLocationFix() } ?: throw LocationUnavailableException()
+
     @SuppressLint("MissingPermission")
-    suspend fun getCurrentLocation(): Location = suspendCancellableCoroutine { continuation ->
+    private suspend fun awaitLocationFix(): Location = suspendCancellableCoroutine { continuation ->
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val provider = when {
             locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) -> LocationManager.NETWORK_PROVIDER

@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -42,6 +44,7 @@ fun FavoritesScreen(
 ) {
     val favoritesState by viewModel.favoritesState.collectAsStateWithLifecycle()
     val addFavoriteMessage by viewModel.addFavoriteMessage.collectAsStateWithLifecycle()
+    val removeFavoriteError by viewModel.removeFavoriteError.collectAsStateWithLifecycle()
     var newCityText by remember { mutableStateOf("") }
 
     Column(
@@ -77,6 +80,14 @@ fun FavoritesScreen(
             }
         }
 
+        removeFavoriteError?.let { message ->
+            Text(text = message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyLarge)
+            LaunchedEffect(message) {
+                kotlinx.coroutines.delay(3_000)
+                viewModel.consumeRemoveFavoriteError()
+            }
+        }
+
         when (val state = favoritesState) {
             is UiState.Loading -> Box(Modifier.fillMaxWidth().padding(24.dp), Alignment.Center) {
                 CircularProgressIndicator()
@@ -86,7 +97,11 @@ fun FavoritesScreen(
             is UiState.Success -> {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(state.data) { favorite ->
-                        FavoriteRow(favorite = favorite, onClick = { onFavoriteSelected(favorite.city) })
+                        FavoriteRow(
+                            favorite = favorite,
+                            onClick = { onFavoriteSelected(favorite.city) },
+                            onRemove = { viewModel.removeFavorite(favorite.city) },
+                        )
                     }
                 }
             }
@@ -95,7 +110,7 @@ fun FavoritesScreen(
 }
 
 @Composable
-private fun FavoriteRow(favorite: FavoriteEntry, onClick: () -> Unit) {
+private fun FavoriteRow(favorite: FavoriteEntry, onClick: () -> Unit, onRemove: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,12 +119,18 @@ private fun FavoriteRow(favorite: FavoriteEntry, onClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Icon(Icons.Filled.Favorite, contentDescription = null)
-            Text(text = favorite.city, style = MaterialTheme.typography.bodyLarge)
+            Text(text = favorite.city, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+            IconButton(onClick = onRemove) {
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = stringResource(R.string.favorites_remove_action, favorite.city),
+                )
+            }
         }
     }
 }

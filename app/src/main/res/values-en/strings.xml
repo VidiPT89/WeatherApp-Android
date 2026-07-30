@@ -17,7 +17,6 @@
     <!-- Dashboard -->
     <string name="dashboard_idle_prompt">Search for a city to see the current weather and forecast.</string>
     <string name="dashboard_locating">Finding your location…</string>
-    <string name="dashboard_loading">Loading…</string>
     <string name="units_label">Units: %1$s</string>
 
     <!-- Current weather card -->
@@ -33,16 +32,11 @@
     <string name="cache_fresh_data">Fresh data</string>
     <string name="cache_served_ago">Served from cache %1$s ago</string>
 
-    <!-- Fallback banner -->
-    <string name="fallback_banner_message">Primary provider unavailable — using fallback (%1$s)</string>
-
     <!-- Forecast -->
     <string name="forecast_title">Forecast</string>
     <string name="forecast_air_temperature_caption">Air temperature</string>
     <string name="forecast_hourly_tab">Hourly</string>
     <string name="forecast_daily_tab">Daily</string>
-    <string name="forecast_max">Max</string>
-    <string name="forecast_min">Min</string>
     <string name="forecast_today_label">Today</string>
     <string name="forecast_now_label">Now: %1$s</string>
     <string name="forecast_page_previous">Previous page</string>
@@ -109,6 +103,21 @@
     <string name="settings_about_github">GitHub</string>
     <string name="settings_about_footer">This app was made by David Arsénio Martins.</string>
     <string name="settings_logout">Log out</string>
+    <string name="settings_admin_title">Administration</string>
+    <string name="settings_admin_button">Manage users</string>
+
+    <!-- Admin (visible only to admin accounts) -->
+    <string name="admin_title">User management</string>
+    <string name="admin_subtitle">Every account registered on WeatherApp.</string>
+    <string name="admin_empty">There are no other accounts yet.</string>
+    <string name="admin_role_admin">Admin</string>
+    <string name="admin_role_user">User</string>
+    <string name="admin_delete_action">Delete account %1$s</string>
+    <string name="admin_confirm_title">Delete account?</string>
+    <string name="admin_confirm_message">Permanently delete the account for %1$s? This action cannot be undone.</string>
+    <string name="admin_confirm_confirm">Delete account</string>
+    <string name="admin_confirm_cancel">Cancel</string>
+    <string name="admin_back_action">Back</string>
 
     <!-- Favorites -->
     <string name="favorites_add_placeholder">Add a city</string>
@@ -116,6 +125,7 @@
     <string name="favorites_empty">You don\'t have any favorite cities yet.</string>
     <string name="favorites_added_message">"\"%1$s\" added to favorites."</string>
     <string name="favorites_duplicate_suffix">" is already a favorite."</string>
+    <string name="favorites_remove_action">Remove %1$s from favorites</string>
 
     <!-- History -->
     <string name="history_title">Search history</string>
@@ -123,7 +133,6 @@
 
     <!-- Auth -->
     <string name="auth_login_subtitle">Sign in to your account to continue</string>
-    <string name="auth_login_title">Sign in</string>
     <string name="auth_register_title">Create account</string>
     <string name="auth_register_subtitle">Password must be at least 8 characters</string>
     <string name="auth_email">Email</string>
@@ -136,9 +145,6 @@
     <string name="auth_missing_email">Please provide an email.</string>
     <string name="auth_password_too_short">Password must be at least %1$d characters.</string>
 
-    <!-- Generic UI states -->
-    <string name="error_generic_load_failed">Could not load the data. Please try again.</string>
-
     <!-- Backend error codes (errorCode field on ApiErrorBody) -->
     <string name="error_city_not_found">We couldn\'t find that city.</string>
     <string name="error_provider_unavailable">The weather provider is currently unavailable. Please try again later.</string>
@@ -146,7 +152,11 @@
     <string name="error_validation_failed">Please check the information you entered.</string>
     <string name="error_email_already_registered">An account with this email already exists.</string>
     <string name="error_invalid_credentials">Incorrect email or password.</string>
+    <string name="error_invalid_refresh_token">Your session has expired. Please sign in again.</string>
     <string name="error_favorite_already_exists">This city is already in your favorites.</string>
+    <string name="error_favorite_not_found">This city is no longer in your favorites.</string>
+    <string name="error_user_not_found">We couldn\'t find that account.</string>
+    <string name="error_conflict">Could not complete the request due to a conflict with existing data.</string>
     <string name="error_unauthenticated">Your session has expired. Please sign in again.</string>
     <string name="error_access_denied">You don\'t have permission to access this resource.</string>
     <string name="error_rate_limit_exceeded">Too many requests. Please wait a moment and try again.</string>

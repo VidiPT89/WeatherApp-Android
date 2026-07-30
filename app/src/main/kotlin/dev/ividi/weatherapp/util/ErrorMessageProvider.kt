@@ -19,9 +19,11 @@ import javax.inject.Singleton
  * (network, serialization) fall back to a generic localized message.
  */
 @Singleton
-class ErrorMessageProvider @Inject constructor(@ApplicationContext private val context: Context) {
+class ErrorMessageProvider @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : ErrorMessageResolver {
 
-    fun messageFor(error: ApiException, @StringRes fallbackRes: Int = R.string.error_generic): String {
+    override fun messageFor(error: ApiException, @StringRes fallbackRes: Int): String {
         val errorCode = (error as? ApiException.HttpError)?.errorCode?.let(ErrorCode::fromWireValue)
         val stringRes = errorCode?.let(::stringResFor) ?: fallbackRes
         return context.getString(stringRes)
@@ -35,7 +37,11 @@ class ErrorMessageProvider @Inject constructor(@ApplicationContext private val c
         ErrorCode.VALIDATION_FAILED -> R.string.error_validation_failed
         ErrorCode.EMAIL_ALREADY_REGISTERED -> R.string.error_email_already_registered
         ErrorCode.INVALID_CREDENTIALS -> R.string.error_invalid_credentials
+        ErrorCode.INVALID_REFRESH_TOKEN -> R.string.error_invalid_refresh_token
         ErrorCode.FAVORITE_ALREADY_EXISTS -> R.string.error_favorite_already_exists
+        ErrorCode.FAVORITE_NOT_FOUND -> R.string.error_favorite_not_found
+        ErrorCode.USER_NOT_FOUND -> R.string.error_user_not_found
+        ErrorCode.CONFLICT -> R.string.error_conflict
         ErrorCode.UNAUTHENTICATED -> R.string.error_unauthenticated
         ErrorCode.ACCESS_DENIED -> R.string.error_access_denied
         ErrorCode.RATE_LIMIT_EXCEEDED -> R.string.error_rate_limit_exceeded

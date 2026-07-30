@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.compose.ui.res.stringResource
+import dev.ividi.weatherapp.ui.admin.AdminScreen
 import dev.ividi.weatherapp.ui.auth.AuthViewModel
 import dev.ividi.weatherapp.ui.auth.LoginScreen
 import dev.ividi.weatherapp.ui.auth.RegisterScreen
@@ -131,8 +132,10 @@ fun WeatherAppNavGraph() {
                             popUpTo(0) { inclusive = true }
                         }
                     },
+                    onNavigateToAdmin = { navController.navigate(Screen.Admin.route) },
                 )
             }
+            composable(Screen.Admin.route) { AdminScreen(onBack = { navController.popBackStack() }) }
         }
     }
 }
