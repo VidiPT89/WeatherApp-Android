@@ -34,6 +34,7 @@ import dev.ividi.weatherapp.di.WeatherWidgetEntryPoint
 import dev.ividi.weatherapp.ui.theme.DarkColors
 import dev.ividi.weatherapp.ui.theme.LightColors
 import dev.ividi.weatherapp.util.cacheAgeBetween
+import dev.ividi.weatherapp.util.localizedWeatherDescription
 import dev.ividi.weatherapp.util.toCompactDisplayString
 import kotlin.math.roundToInt
 import kotlinx.datetime.Clock
@@ -133,7 +134,7 @@ private fun FilledWidgetContent(snapshot: WeatherWidgetSnapshot) {
             )
         }
         Text(
-            text = snapshot.description.replaceFirstChar { it.uppercase() },
+            text = localizedWeatherDescription(snapshot.description),
             maxLines = 1,
             style = TextStyle(color = GlanceTheme.colors.onPrimaryContainer, fontSize = 12.sp),
         )

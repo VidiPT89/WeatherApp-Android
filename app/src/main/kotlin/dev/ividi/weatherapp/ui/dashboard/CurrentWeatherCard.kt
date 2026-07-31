@@ -27,6 +27,7 @@ import dev.ividi.weatherapp.data.model.WeatherResponse
 import dev.ividi.weatherapp.ui.common.CacheBadge
 import dev.ividi.weatherapp.ui.common.weatherConditionGradient
 import dev.ividi.weatherapp.ui.common.weatherConditionNeedsLightText
+import dev.ividi.weatherapp.util.localizedWeatherDescription
 import dev.ividi.weatherapp.util.toDisplayTime
 
 /**
@@ -73,7 +74,7 @@ fun CurrentWeatherCard(
             modifier = Modifier.padding(top = 16.dp),
         )
         Text(
-            text = weather.description.replaceFirstChar { it.uppercase() },
+            text = localizedWeatherDescription(weather.description),
             style = MaterialTheme.typography.bodyLarge,
             color = textColor,
         )

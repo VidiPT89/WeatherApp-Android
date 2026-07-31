@@ -36,6 +36,7 @@ import dev.ividi.weatherapp.ui.common.CacheBadge
 import dev.ividi.weatherapp.ui.common.ConditionLabels
 import dev.ividi.weatherapp.ui.common.weatherConditionGradient
 import dev.ividi.weatherapp.ui.common.weatherConditionNeedsLightText
+import dev.ividi.weatherapp.util.localizedWeatherDescription
 import dev.ividi.weatherapp.util.toDisplayTime
 import kotlin.math.roundToInt
 
@@ -81,7 +82,7 @@ fun WeatherDetailSheet(weather: WeatherResponse, todayForecast: DailyForecastEnt
             modifier = Modifier.padding(top = 16.dp),
         )
         Text(
-            text = weather.description.replaceFirstChar { it.uppercase() },
+            text = localizedWeatherDescription(weather.description),
             style = MaterialTheme.typography.bodyLarge,
             color = textColor,
         )
