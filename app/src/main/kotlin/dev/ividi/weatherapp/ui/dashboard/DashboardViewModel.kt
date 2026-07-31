@@ -72,6 +72,8 @@ class DashboardViewModel @Inject constructor(
     val isLocating: StateFlow<Boolean> = _isLocating.asStateFlow()
 
     private var currentCity: String? = null
+    /** Whether `currentCity` came from GPS auto-detection rather than a manual search. */
+    private var lastLoadWasFromNearbyLocation = false
 
     init {
         viewModelScope.launch {
@@ -104,9 +106,15 @@ class DashboardViewModel @Inject constructor(
         onCitySelected(city)
     }
 
-    fun onCitySelected(city: String) {
+    /**
+     * @param isFromNearbyLocation `true` only for the GPS-detected city (from [loadNearbyWeather])
+     * -- gates whether the home-screen widget gets updated (see [loadWeather]). The widget answers
+     * "what's the weather where I am", not "what was the last city I looked up", so a manual
+     * search (the default, `false`) must never overwrite it.
+     */
+    fun onCitySelected(city: String, isFromNearbyLocation: Boolean = false) {
         _searchQuery.value = city
-        loadWeather(city)
+        loadWeather(city, isFromNearbyLocation)
     }
 
     /**
@@ -127,7 +135,7 @@ class DashboardViewModel @Inject constructor(
             _isLocating.value = false
 
             // No location provider enabled or the lookup failed -- stay on the empty state.
-            weather?.let { onCitySelected(it.city) }
+            weather?.let { onCitySelected(it.city, isFromNearbyLocation = true) }
         }
     }
 
@@ -144,11 +152,14 @@ class DashboardViewModel @Inject constructor(
             runCatching { preferencesRepository.updatePreferredUnits(newUnits) }
         }
 
-        currentCity?.let { loadWeather(it) }
+        // Preserve whether this city came from GPS auto-detection so a units toggle doesn't
+        // accidentally start (or stop) updating the widget.
+        currentCity?.let { loadWeather(it, lastLoadWasFromNearbyLocation) }
     }
 
-    private fun loadWeather(city: String) {
+    private fun loadWeather(city: String, isFromNearbyLocation: Boolean = false) {
         currentCity = city
+        lastLoadWasFromNearbyLocation = isFromNearbyLocation
         _weatherState.value = UiState.Loading
         _forecastState.value = UiState.Loading
         _marineState.value = UiState.Loading
@@ -169,9 +180,13 @@ class DashboardViewModel @Inject constructor(
 
                 _weatherState.value = try {
                     val weather = weatherDeferred.await()
-                    // Best-effort: the widget mirroring the last-seen weather is a nice-to-have,
-                    // never something that should turn a successful Dashboard load into an error.
-                    runCatching { weatherWidgetRepository.saveSnapshot(weather) }
+                    // The widget answers "what's the weather where I am", not "what was the last
+                    // city I looked up" -- only ever updated from the GPS-detected city. Also
+                    // best-effort: never something that should turn a successful load into an
+                    // error.
+                    if (isFromNearbyLocation) {
+                        runCatching { weatherWidgetRepository.saveSnapshot(weather) }
+                    }
                     UiState.Success(weather)
                 } catch (error: ApiException) {
                     UiState.Error(errorMessageProvider.messageFor(error))
