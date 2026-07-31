@@ -17,6 +17,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 class LocationUnavailableException : Exception("Não foi possível obter a localização.")
 
 private const val LOCATION_TIMEOUT_MS = 10_000L
+private const val MAX_CACHED_LOCATION_AGE_MS = 5 * 60_000L
 
 /**
  * One-shot location fix via the platform LocationManager (no Play Services dependency, since
@@ -45,6 +46,16 @@ class LocationService @Inject constructor(@ApplicationContext private val contex
 
         if (provider == null) {
             continuation.resumeWithException(LocationUnavailableException())
+            return@suspendCancellableCoroutine
+        }
+
+        // A weather lookup only needs city-level precision, so a recently cached fix is just as
+        // good as a brand new one -- and it's available immediately, unlike requestLocationUpdates
+        // below, which always waits for the provider to produce a fresh reading (seconds for
+        // network, potentially much longer for a cold-start GPS lock).
+        val cached = locationManager.getLastKnownLocation(provider)
+        if (cached != null && System.currentTimeMillis() - cached.time <= MAX_CACHED_LOCATION_AGE_MS) {
+            continuation.resume(cached)
             return@suspendCancellableCoroutine
         }
 
