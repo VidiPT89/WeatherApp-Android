@@ -16,6 +16,7 @@ import dev.ividi.weatherapp.data.repository.InsightsRepository
 import dev.ividi.weatherapp.data.repository.MarineRepository
 import dev.ividi.weatherapp.data.repository.PreferencesRepository
 import dev.ividi.weatherapp.data.repository.WeatherRepository
+import dev.ividi.weatherapp.data.repository.WeatherWidgetRepository
 import dev.ividi.weatherapp.location.LocationService
 import dev.ividi.weatherapp.ui.common.UiState
 import dev.ividi.weatherapp.ui.navigation.Screen
@@ -36,6 +37,7 @@ class DashboardViewModel @Inject constructor(
     private val insightsRepository: InsightsRepository,
     private val geocodingRepository: GeocodingRepository,
     private val preferencesRepository: PreferencesRepository,
+    private val weatherWidgetRepository: WeatherWidgetRepository,
     private val errorMessageProvider: ErrorMessageProvider,
     private val locationService: LocationService,
     savedStateHandle: SavedStateHandle,
@@ -166,7 +168,11 @@ class DashboardViewModel @Inject constructor(
                 val insightsDeferred = async { insightsRepository.getInsights(city, unitsToUse) }
 
                 _weatherState.value = try {
-                    UiState.Success(weatherDeferred.await())
+                    val weather = weatherDeferred.await()
+                    // Best-effort: the widget mirroring the last-seen weather is a nice-to-have,
+                    // never something that should turn a successful Dashboard load into an error.
+                    runCatching { weatherWidgetRepository.saveSnapshot(weather) }
+                    UiState.Success(weather)
                 } catch (error: ApiException) {
                     UiState.Error(errorMessageProvider.messageFor(error))
                 }

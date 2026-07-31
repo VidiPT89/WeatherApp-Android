@@ -8,6 +8,8 @@ import dev.ividi.weatherapp.data.auth.AuthRepository
 import dev.ividi.weatherapp.data.auth.CurrentUserProvider
 import dev.ividi.weatherapp.util.ErrorMessageProvider
 import dev.ividi.weatherapp.util.ErrorMessageResolver
+import dev.ividi.weatherapp.util.StringProvider
+import dev.ividi.weatherapp.util.StringResolver
 import javax.inject.Singleton
 
 /**
@@ -26,4 +28,8 @@ abstract class BindingModule {
     @Binds
     @Singleton
     abstract fun bindErrorMessageResolver(errorMessageProvider: ErrorMessageProvider): ErrorMessageResolver
+
+    @Binds
+    @Singleton
+    abstract fun bindStringResolver(stringProvider: StringProvider): StringResolver
 }

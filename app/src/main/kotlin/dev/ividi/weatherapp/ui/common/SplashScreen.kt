@@ -162,6 +162,11 @@ fun SplashScreen() {
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.White.copy(alpha = 0.75f),
                 )
+                Text(
+                    text = stringResource(R.string.splash_creator_github),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.75f),
+                )
             }
         }
     }

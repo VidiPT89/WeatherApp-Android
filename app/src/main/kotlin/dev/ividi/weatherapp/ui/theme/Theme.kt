@@ -10,13 +10,16 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val LightColors = lightColorScheme(
+// internal (not private): also used by WeatherGlanceWidget to theme the home-screen widget with
+// the same static (non-dynamic) palette as the in-app fallback, so the widget doesn't look like a
+// visually unrelated surface when dynamic color isn't available/applicable to Glance.
+internal val LightColors = lightColorScheme(
     primary = WeatherBlue40,
     secondary = SkyAccent40,
     tertiary = WeatherBlueGrey40,
 )
 
-private val DarkColors = darkColorScheme(
+internal val DarkColors = darkColorScheme(
     primary = WeatherBlue80,
     secondary = SkyAccent80,
     tertiary = WeatherBlueGrey80,

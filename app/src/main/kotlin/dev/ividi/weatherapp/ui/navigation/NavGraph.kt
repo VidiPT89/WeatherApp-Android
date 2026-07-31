@@ -35,7 +35,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 
-private const val SPLASH_MINIMUM_DURATION_MS = 1_400L
+// Matches iOS's splash duration (see WeatherApp-iOS's RootView) so the branded splash reads
+// consistently across both clients instead of Android flashing by noticeably faster.
+private const val SPLASH_MINIMUM_DURATION_MS = 2_300L
 
 /** Root graph: a branded splash, then an auth flow (login/register), then the bottom-nav'd main app. */
 @Composable

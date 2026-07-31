@@ -4,6 +4,7 @@
     <string name="splash_tagline">Sol, marés e o que mais precisares de saber</string>
     <string name="splash_creator_credit">Criado por David Arsénio Martins</string>
     <string name="splash_creator_website">ividi.dev</string>
+    <string name="splash_creator_github">github.com/VidiPT89</string>
 
     <!-- Bottom navigation -->
     <string name="nav_home">Início</string>
@@ -27,6 +28,18 @@
     <string name="weather_sunset">Pôr do sol</string>
     <string name="weather_uv_index">Índice UV</string>
     <string name="weather_precipitation">Prob. de chuva</string>
+    <string name="weather_wind_max">Vento máx. hoje</string>
+    <string name="weather_rain_likely_yes">Chuva provável hoje</string>
+    <string name="weather_rain_likely_no">Chuva improvável hoje</string>
+
+    <!-- Detail bottom sheets (tap a Dashboard card for more) -->
+    <string name="detail_sheet_close">Fechar</string>
+    <string name="weather_detail_title">Detalhes do tempo</string>
+    <string name="weather_detail_today_section">Mais sobre hoje</string>
+    <string name="marine_detail_today_section">Ondulação de hoje (previsão)</string>
+    <string name="marine_detail_tides_empty">Sem marés estimadas para esta localização.</string>
+    <string name="insights_multi_day_title">Próximos dias</string>
+    <string name="insights_multi_day_subtitle">Risco UV, atividades ao ar livre, pesca e surf para os próximos dias.</string>
 
     <!-- Cache badge -->
     <string name="cache_fresh_data">Dados frescos</string>
@@ -61,6 +74,7 @@
     <string name="insights_uv_risk">Risco UV</string>
     <string name="insights_outdoor_activity">Atividades ao ar livre</string>
     <string name="insights_fishing_conditions">Condições de pesca</string>
+    <string name="insights_surf_conditions">Condições de surf</string>
     <string name="moon_phase_new_moon">Nova</string>
     <string name="moon_phase_waxing_crescent">Crescente</string>
     <string name="moon_phase_first_quarter">Quarto Crescente</string>
@@ -121,11 +135,15 @@
 
     <!-- Favorites -->
     <string name="favorites_add_placeholder">Adicionar cidade</string>
-    <string name="favorites_add_button">Adicionar</string>
     <string name="favorites_empty">Ainda não tem cidades favoritas.</string>
     <string name="favorites_added_message">"\"%1$s\" adicionada aos favoritos."</string>
     <string name="favorites_duplicate_suffix">" já é um favorito."</string>
     <string name="favorites_remove_action">Remover %1$s dos favoritos</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Mostra o tempo que a app viu da última vez.</string>
+    <string name="widget_no_data_yet">Abra a app para ver o tempo aqui</string>
+    <string name="widget_last_updated">Atualizado há %1$s</string>
 
     <!-- History -->
     <string name="history_title">Histórico de pesquisas</string>

@@ -43,7 +43,12 @@ private const val POINT_RADIUS_DP = 3
 private const val HOUR_SLOT_WIDTH_DP = 32
 private const val PRECIPITATION_BAR_MAX_HEIGHT_DP = 40
 private const val HOUR_LABEL_STEP = 3
-private const val HOURS_PER_PAGE = 7
+// A full day per page tap: was 7h, which took ~7 taps to page through the 48h forecast and made
+// the header's "visible range" caption understate how much was actually on screen on most phones
+// (the chart itself scrolls freely by drag already; this constant only governs the discrete
+// paging-button jump and that caption). 24h mirrors iOS's widened hourly window for the same
+// "too much paging to see the day's temperatures" complaint.
+private const val HOURS_PER_PAGE = 24
 
 /**
  * Hand-rolled Canvas line chart for the full hourly forecast (up to 48 points, per the

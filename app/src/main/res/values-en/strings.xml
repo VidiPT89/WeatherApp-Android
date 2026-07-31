@@ -4,6 +4,7 @@
     <string name="splash_tagline">Sun, tides, and whatever else you need to know</string>
     <string name="splash_creator_credit">Created by David Arsénio Martins</string>
     <string name="splash_creator_website">ividi.dev</string>
+    <string name="splash_creator_github">github.com/VidiPT89</string>
 
     <!-- Bottom navigation -->
     <string name="nav_home">Home</string>
@@ -27,6 +28,18 @@
     <string name="weather_sunset">Sunset</string>
     <string name="weather_uv_index">UV index</string>
     <string name="weather_precipitation">Rain chance</string>
+    <string name="weather_wind_max">Today\'s max wind</string>
+    <string name="weather_rain_likely_yes">Rain likely today</string>
+    <string name="weather_rain_likely_no">Rain unlikely today</string>
+
+    <!-- Detail bottom sheets (tap a Dashboard card for more) -->
+    <string name="detail_sheet_close">Close</string>
+    <string name="weather_detail_title">Weather details</string>
+    <string name="weather_detail_today_section">More about today</string>
+    <string name="marine_detail_today_section">Today\'s swell (forecast)</string>
+    <string name="marine_detail_tides_empty">No estimated tides for this location.</string>
+    <string name="insights_multi_day_title">Coming days</string>
+    <string name="insights_multi_day_subtitle">UV risk, outdoor activity, fishing and surf for the next few days.</string>
 
     <!-- Cache badge -->
     <string name="cache_fresh_data">Fresh data</string>
@@ -61,6 +74,7 @@
     <string name="insights_uv_risk">UV risk</string>
     <string name="insights_outdoor_activity">Outdoor activity</string>
     <string name="insights_fishing_conditions">Fishing conditions</string>
+    <string name="insights_surf_conditions">Surf conditions</string>
     <string name="moon_phase_new_moon">New</string>
     <string name="moon_phase_waxing_crescent">Waxing Crescent</string>
     <string name="moon_phase_first_quarter">First Quarter</string>
@@ -121,11 +135,15 @@
 
     <!-- Favorites -->
     <string name="favorites_add_placeholder">Add a city</string>
-    <string name="favorites_add_button">Add</string>
     <string name="favorites_empty">You don\'t have any favorite cities yet.</string>
     <string name="favorites_added_message">"\"%1$s\" added to favorites."</string>
     <string name="favorites_duplicate_suffix">" is already a favorite."</string>
     <string name="favorites_remove_action">Remove %1$s from favorites</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">Shows the weather the app last saw.</string>
+    <string name="widget_no_data_yet">Open the app to see the weather here</string>
+    <string name="widget_last_updated">Updated %1$s ago</string>
 
     <!-- History -->
     <string name="history_title">Search history</string>

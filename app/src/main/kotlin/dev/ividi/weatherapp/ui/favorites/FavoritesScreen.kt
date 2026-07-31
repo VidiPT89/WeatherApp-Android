@@ -13,20 +13,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.FavoriteEntry
+import dev.ividi.weatherapp.ui.common.SearchAutocompleteField
 import dev.ividi.weatherapp.ui.common.UiState
 
 @Composable
@@ -45,7 +41,8 @@ fun FavoritesScreen(
     val favoritesState by viewModel.favoritesState.collectAsStateWithLifecycle()
     val addFavoriteMessage by viewModel.addFavoriteMessage.collectAsStateWithLifecycle()
     val removeFavoriteError by viewModel.removeFavoriteError.collectAsStateWithLifecycle()
-    var newCityText by remember { mutableStateOf("") }
+    val newCityQuery by viewModel.newCityQuery.collectAsStateWithLifecycle()
+    val suggestions by viewModel.suggestions.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -53,24 +50,16 @@ fun FavoritesScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            OutlinedTextField(
-                value = newCityText,
-                onValueChange = { newCityText = it },
-                label = { Text(stringResource(R.string.favorites_add_placeholder)) },
-                singleLine = true,
-                modifier = Modifier.weight(1f),
-            )
-            Button(onClick = {
-                viewModel.addFavorite(newCityText)
-                newCityText = ""
-            }) {
-                Text(stringResource(R.string.favorites_add_button))
-            }
-        }
+        // Same debounced-autocomplete field as the Dashboard's city search -- picking a
+        // suggestion is the only way to add a favorite, so it's always a real geocoded place.
+        SearchAutocompleteField(
+            query = newCityQuery,
+            onQueryChange = viewModel::onNewCityQueryChange,
+            suggestions = suggestions,
+            onSuggestionSelected = viewModel::onSuggestionSelected,
+            onSearchSubmit = { viewModel.onNewCitySubmit() },
+            placeholder = stringResource(R.string.favorites_add_placeholder),
+        )
 
         addFavoriteMessage?.let { message ->
             Text(text = message, style = MaterialTheme.typography.bodyLarge)

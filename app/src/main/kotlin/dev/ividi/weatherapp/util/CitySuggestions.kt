@@ -1,6 +1,7 @@
 package dev.ividi.weatherapp.util
 
 import dev.ividi.weatherapp.data.model.GeocodingResult
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
@@ -17,7 +18,7 @@ private const val MIN_QUERY_LENGTH = 2
  * [SEARCH_DEBOUNCE_MS], requires at least [MIN_QUERY_LENGTH] characters, and cancels any
  * in-flight lookup as soon as a newer query arrives.
  */
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 fun citySuggestionsFlow(
     queryFlow: Flow<String>,
     search: suspend (String) -> List<GeocodingResult>,

@@ -8,6 +8,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,15 +16,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +48,10 @@ import dev.ividi.weatherapp.ui.common.UiState
 import dev.ividi.weatherapp.ui.common.WeatherCardSkeleton
 import dev.ividi.weatherapp.util.isFallbackProvider
 
+/** Which of the tappable Dashboard cards currently has its detail bottom sheet open, if any. */
+private enum class DetailSheet { WEATHER, MARINE, INSIGHTS }
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -52,6 +63,11 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     val insightsState by viewModel.insightsState.collectAsStateWithLifecycle()
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val isLocating by viewModel.isLocating.collectAsStateWithLifecycle()
+
+    // Tapping the weather/marine/insights cards opens a bottom sheet with more detail than fits
+    // on the compact card -- see DashboardDetailSheets.kt.
+    var activeSheet by remember { mutableStateOf<DetailSheet?>(null) }
+    val todayForecast = (forecastState as? UiState.Success)?.data?.daily?.firstOrNull()
 
     val context = LocalContext.current
     val locationPermissionLauncher = rememberLauncherForActivityResult(
@@ -109,8 +125,11 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                             if (isFallbackProvider(state.data.provider)) {
                                 FallbackBanner(provider = state.data.provider)
                             }
-                            val todayForecast = (forecastState as? UiState.Success)?.data?.daily?.firstOrNull()
-                            CurrentWeatherCard(weather = state.data, todayForecast = todayForecast)
+                            CurrentWeatherCard(
+                                weather = state.data,
+                                todayForecast = todayForecast,
+                                modifier = Modifier.clickable { activeSheet = DetailSheet.WEATHER },
+                            )
                         }
                     }
                 }
@@ -151,7 +170,10 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
 
         item {
             when (val state = marineState) {
-                is UiState.Success -> SeaConditionsCard(marine = state.data)
+                is UiState.Success -> SeaConditionsCard(
+                    marine = state.data,
+                    modifier = Modifier.clickable { activeSheet = DetailSheet.MARINE },
+                )
                 is UiState.Loading -> ChartSkeleton()
                 is UiState.Error -> ErrorStateMessage(state.message)
                 is UiState.Empty -> Unit
@@ -160,10 +182,30 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
 
         item {
             when (val state = insightsState) {
-                is UiState.Success -> WeatherInsightsCard(insights = state.data)
+                is UiState.Success -> WeatherInsightsCard(
+                    insights = state.data,
+                    modifier = Modifier.clickable { activeSheet = DetailSheet.INSIGHTS },
+                )
                 is UiState.Loading -> ChartSkeleton()
                 is UiState.Error -> ErrorStateMessage(state.message)
                 is UiState.Empty -> Unit
+            }
+        }
+    }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    activeSheet?.let { sheet ->
+        ModalBottomSheet(onDismissRequest = { activeSheet = null }, sheetState = sheetState) {
+            when (sheet) {
+                DetailSheet.WEATHER -> (weatherState as? UiState.Success)?.data?.let { weather ->
+                    WeatherDetailSheet(weather = weather, todayForecast = todayForecast)
+                }
+                DetailSheet.MARINE -> (marineState as? UiState.Success)?.data?.let { marine ->
+                    MarineDetailSheet(marine = marine, todayForecast = todayForecast)
+                }
+                DetailSheet.INSIGHTS -> (forecastState as? UiState.Success)?.data?.daily?.let { entries ->
+                    InsightsDetailSheet(dailyEntries = entries)
+                }
             }
         }
     }
