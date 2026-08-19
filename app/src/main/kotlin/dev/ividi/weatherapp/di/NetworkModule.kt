@@ -23,7 +23,7 @@ import retrofit2.Retrofit
  * cleartext exception for `10.0.2.2`/`localhost` for anyone switching this back to a local
  * backend during development; it has no effect on this HTTPS URL.
  */
-private const val BASE_URL = "https://weather-api-production-68ff.up.railway.app/"
+private const val BASE_URL = "https://weatherapi-4r5x.onrender.com/"
 private const val CONNECT_TIMEOUT_SECONDS = 15L
 private const val READ_TIMEOUT_SECONDS = 15L
 private const val JSON_MEDIA_TYPE = "application/json"
