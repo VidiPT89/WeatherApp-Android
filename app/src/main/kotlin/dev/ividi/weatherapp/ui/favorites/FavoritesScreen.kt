@@ -31,13 +31,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.FavoriteEntry
 import dev.ividi.weatherapp.ui.common.SearchAutocompleteField
+import dev.ividi.weatherapp.ui.common.SignInRequired
 import dev.ividi.weatherapp.ui.common.UiState
 
 @Composable
 fun FavoritesScreen(
+    isLoggedIn: Boolean,
+    onNavigateToLogin: () -> Unit,
     onFavoriteSelected: (String) -> Unit,
     viewModel: FavoritesViewModel = hiltViewModel(),
 ) {
+    if (!isLoggedIn) {
+        SignInRequired(
+            message = stringResource(R.string.sign_in_required_favorites),
+            onSignIn = onNavigateToLogin,
+        )
+        return
+    }
+
     val favoritesState by viewModel.favoritesState.collectAsStateWithLifecycle()
     val addFavoriteMessage by viewModel.addFavoriteMessage.collectAsStateWithLifecycle()
     val removeFavoriteError by viewModel.removeFavoriteError.collectAsStateWithLifecycle()

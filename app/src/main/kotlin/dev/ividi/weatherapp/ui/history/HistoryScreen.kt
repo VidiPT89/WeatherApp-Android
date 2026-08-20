@@ -33,11 +33,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.ividi.weatherapp.R
 import dev.ividi.weatherapp.data.model.HistoryEntry
+import dev.ividi.weatherapp.ui.common.SignInRequired
 import dev.ividi.weatherapp.ui.common.UiState
 import dev.ividi.weatherapp.util.toDisplayDateTime
 
 @Composable
-fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
+fun HistoryScreen(
+    isLoggedIn: Boolean,
+    onNavigateToLogin: () -> Unit,
+    viewModel: HistoryViewModel = hiltViewModel(),
+) {
+    if (!isLoggedIn) {
+        SignInRequired(
+            message = stringResource(R.string.sign_in_required_history),
+            onSignIn = onNavigateToLogin,
+        )
+        return
+    }
+
     val historyState by viewModel.historyState.collectAsStateWithLifecycle()
     val deleteError by viewModel.deleteError.collectAsStateWithLifecycle()
     var showClearAllConfirm by remember { mutableStateOf(false) }

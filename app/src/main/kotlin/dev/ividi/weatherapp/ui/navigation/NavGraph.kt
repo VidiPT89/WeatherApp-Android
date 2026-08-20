@@ -39,7 +39,12 @@ import kotlinx.coroutines.delay
 // consistently across both clients instead of Android flashing by noticeably faster.
 private const val SPLASH_MINIMUM_DURATION_MS = 2_300L
 
-/** Root graph: a branded splash, then an auth flow (login/register), then the bottom-nav'd main app. */
+/**
+ * Root graph: a branded splash, then the bottom-nav'd main app. Weather lookup works without an
+ * account, so the app always starts on Dashboard -- Login/Register are only ever reached from
+ * Favorites, History or Settings, the three features that still need a signed-in user, and pop
+ * back to whichever of those screens asked for them once auth succeeds.
+ */
 @Composable
 fun WeatherAppNavGraph() {
     var showSplash by remember { mutableStateOf(true) }
@@ -57,50 +62,27 @@ fun WeatherAppNavGraph() {
     val authViewModel: AuthViewModel = hiltViewModel()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsStateWithLifecycle()
 
-    val startDestination = if (isLoggedIn) Screen.Dashboard.routeFor() else Screen.Login.route
-
-    // TokenAuthenticator clears the session in the background when a refresh fails (session
-    // fully expired) -- without this, the user is left stranded on whatever screen they were on,
-    // with every subsequent request 401ing silently.
-    LaunchedEffect(isLoggedIn) {
-        if (!isLoggedIn) {
-            val current = navController.currentDestination?.route
-            if (current != Screen.Login.route && current != Screen.Register.route) {
-                navController.navigate(Screen.Login.route) {
-                    popUpTo(0) { inclusive = true }
-                }
-            }
-        }
-    }
+    val onNavigateToLogin: () -> Unit = { navController.navigate(Screen.Login.route) }
 
     Scaffold(
-        bottomBar = {
-            if (isLoggedIn) {
-                MainBottomBar(navController)
-            }
-        },
+        bottomBar = { MainBottomBar(navController) },
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = startDestination,
+            startDestination = Screen.Dashboard.routeFor(),
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(Screen.Login.route) {
                 LoginScreen(
-                    onLoginSuccess = {
-                        navController.navigate(Screen.Dashboard.routeFor()) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
-                        }
-                    },
+                    onLoginSuccess = { navController.popBackStack() },
                     onNavigateToRegister = { navController.navigate(Screen.Register.route) },
+                    onClose = { navController.popBackStack() },
                 )
             }
             composable(Screen.Register.route) {
                 RegisterScreen(
                     onRegisterSuccess = {
-                        navController.navigate(Screen.Dashboard.routeFor()) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
-                        }
+                        navController.popBackStack(Screen.Login.route, inclusive = true)
                     },
                     onNavigateToLogin = { navController.popBackStack() },
                 )
@@ -119,6 +101,8 @@ fun WeatherAppNavGraph() {
             }
             composable(Screen.Favorites.route) {
                 FavoritesScreen(
+                    isLoggedIn = isLoggedIn,
+                    onNavigateToLogin = onNavigateToLogin,
                     onFavoriteSelected = { city ->
                         navController.navigate(Screen.Dashboard.routeFor(city)) {
                             popUpTo(Screen.Dashboard.route) { inclusive = true }
@@ -126,14 +110,14 @@ fun WeatherAppNavGraph() {
                     },
                 )
             }
-            composable(Screen.History.route) { HistoryScreen() }
+            composable(Screen.History.route) {
+                HistoryScreen(isLoggedIn = isLoggedIn, onNavigateToLogin = onNavigateToLogin)
+            }
             composable(Screen.Settings.route) {
                 SettingsScreen(
-                    onLoggedOut = {
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    },
+                    isLoggedIn = isLoggedIn,
+                    onNavigateToLogin = onNavigateToLogin,
+                    onLoggedOut = {},
                     onNavigateToAdmin = { navController.navigate(Screen.Admin.route) },
                 )
             }

@@ -33,6 +33,7 @@ import dev.ividi.weatherapp.ui.common.UiState
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    onClose: (() -> Unit)? = null,
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     var email by remember { mutableStateOf("") }
@@ -108,6 +109,12 @@ fun LoginScreen(
                 .padding(top = 4.dp),
         ) {
             Text(stringResource(R.string.auth_no_account_prompt))
+        }
+
+        if (onClose != null) {
+            TextButton(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.auth_close_action))
+            }
         }
     }
 }

@@ -38,6 +38,8 @@ private const val GITHUB_URL = "https://github.com/VidiPT89"
 
 @Composable
 fun SettingsScreen(
+    isLoggedIn: Boolean,
+    onNavigateToLogin: () -> Unit,
     onLoggedOut: () -> Unit,
     onNavigateToAdmin: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -56,23 +58,25 @@ fun SettingsScreen(
     ) {
         Text(text = stringResource(R.string.settings_title), style = MaterialTheme.typography.titleLarge)
 
-        Text(text = stringResource(R.string.settings_units_label), style = MaterialTheme.typography.bodyLarge)
+        if (isLoggedIn) {
+            Text(text = stringResource(R.string.settings_units_label), style = MaterialTheme.typography.bodyLarge)
 
-        when (val state = preferencesState) {
-            is UiState.Loading -> Box(Modifier.fillMaxWidth().padding(24.dp), Alignment.Center) {
-                CircularProgressIndicator()
-            }
-            is UiState.Error -> Text(state.message, color = MaterialTheme.colorScheme.error)
-            is UiState.Empty -> Unit
-            is UiState.Success -> {
-                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                    Units.entries.forEachIndexed { index, unit ->
-                        SegmentedButton(
-                            selected = state.data == unit,
-                            onClick = { viewModel.updateUnits(unit) },
-                            shape = SegmentedButtonDefaults.itemShape(index, Units.entries.size),
-                        ) {
-                            Text(unit.temperatureSymbol)
+            when (val state = preferencesState) {
+                is UiState.Loading -> Box(Modifier.fillMaxWidth().padding(24.dp), Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+                is UiState.Error -> Text(state.message, color = MaterialTheme.colorScheme.error)
+                is UiState.Empty -> Unit
+                is UiState.Success -> {
+                    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                        Units.entries.forEachIndexed { index, unit ->
+                            SegmentedButton(
+                                selected = state.data == unit,
+                                onClick = { viewModel.updateUnits(unit) },
+                                shape = SegmentedButtonDefaults.itemShape(index, Units.entries.size),
+                            ) {
+                                Text(unit.temperatureSymbol)
+                            }
                         }
                     }
                 }
@@ -151,12 +155,26 @@ fun SettingsScreen(
             Text(text = stringResource(R.string.settings_about_footer), style = MaterialTheme.typography.bodySmall)
         }
 
+        if (!isLoggedIn) {
+            Text(
+                text = stringResource(R.string.settings_guest_footer),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            OutlinedButton(onClick = {
-                viewModel.logout()
-                onLoggedOut()
-            }) {
-                Text(stringResource(R.string.settings_logout))
+            if (isLoggedIn) {
+                OutlinedButton(onClick = {
+                    viewModel.logout()
+                    onLoggedOut()
+                }) {
+                    Text(stringResource(R.string.settings_logout))
+                }
+            } else {
+                OutlinedButton(onClick = onNavigateToLogin) {
+                    Text(stringResource(R.string.settings_login))
+                }
             }
         }
     }

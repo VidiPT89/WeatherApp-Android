@@ -117,6 +117,12 @@
     <string name="settings_about_github">GitHub</string>
     <string name="settings_about_footer">This app was made by David Arsénio Martins.</string>
     <string name="settings_logout">Log out</string>
+    <string name="settings_login">Sign in / Create account</string>
+    <string name="settings_guest_footer">Weather lookup works without an account. Sign in to save favorites and history.</string>
+    <string name="sign_in_required_favorites">Sign in to save your favorite cities.</string>
+    <string name="sign_in_required_history">Sign in to save your search history.</string>
+    <string name="sign_in_required_action">Sign in / Create account</string>
+    <string name="auth_close_action">Close</string>
     <string name="settings_admin_title">Administration</string>
     <string name="settings_admin_button">Manage users</string>
 
