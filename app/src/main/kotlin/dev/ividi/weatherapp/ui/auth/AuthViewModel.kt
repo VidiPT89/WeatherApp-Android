@@ -78,6 +78,19 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /** [provider] is lowercase, e.g. "google" -- the native ID token was already obtained on-device. */
+    fun loginWithOAuth(provider: String, idToken: String) {
+        _uiState.value = UiState.Loading
+        viewModelScope.launch {
+            try {
+                authRepository.loginWithOAuth(provider, idToken)
+                _uiState.value = UiState.Success(Unit)
+            } catch (error: ApiException) {
+                _uiState.value = UiState.Error(errorMessageProvider.messageFor(error))
+            }
+        }
+    }
+
     fun resetState() {
         _uiState.value = UiState.Empty
     }

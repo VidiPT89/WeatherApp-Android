@@ -1,6 +1,7 @@
 package dev.ividi.weatherapp.data.auth
 
 import dev.ividi.weatherapp.data.model.LoginRequest
+import dev.ividi.weatherapp.data.model.OAuthRequest
 import dev.ividi.weatherapp.data.model.RefreshRequest
 import dev.ividi.weatherapp.data.model.RegisterRequest
 import dev.ividi.weatherapp.data.model.UserAccount
@@ -46,6 +47,15 @@ class AuthRepository @Inject constructor(
     suspend fun login(email: String, password: String) {
         val response = safeApiCall(json) {
             apiService.login(LoginRequest(email = email, password = password))
+        }
+        tokenStorage.saveTokens(response.token, response.refreshToken)
+        refreshCurrentUser()
+    }
+
+    /** [provider] is lowercase, e.g. "google" -- matches the backend's `/auth/oauth/{provider}` path. */
+    suspend fun loginWithOAuth(provider: String, idToken: String) {
+        val response = safeApiCall(json) {
+            apiService.oauthLogin(provider, OAuthRequest(idToken = idToken))
         }
         tokenStorage.saveTokens(response.token, response.refreshToken)
         refreshCurrentUser()

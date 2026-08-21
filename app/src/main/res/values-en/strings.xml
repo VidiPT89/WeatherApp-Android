@@ -169,6 +169,7 @@
     <string name="auth_password">Password</string>
     <string name="auth_login_button">Sign in</string>
     <string name="auth_register_button">Create account</string>
+    <string name="auth_google_button">Continue with Google</string>
     <string name="auth_no_account_prompt">Don\'t have an account? Sign up</string>
     <string name="auth_has_account_prompt">Already have an account? Sign in</string>
     <string name="auth_missing_credentials">Please fill in your email and password.</string>

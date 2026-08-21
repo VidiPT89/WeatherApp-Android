@@ -19,6 +19,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Not a secret (it's the client id verified server-side, no client secret involved) --
+        // safe to set directly in gradle.properties once an OAuth client exists. Empty means the
+        // Google sign-in button just fails at runtime instead of failing to build.
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            "\"${project.findProperty("GOOGLE_WEB_CLIENT_ID") ?: ""}\"",
+        )
     }
 
     buildTypes {
@@ -76,6 +85,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

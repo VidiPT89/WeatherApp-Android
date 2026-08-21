@@ -169,6 +169,7 @@
     <string name="auth_password">Palavra-passe</string>
     <string name="auth_login_button">Entrar</string>
     <string name="auth_register_button">Registar</string>
+    <string name="auth_google_button">Continuar com Google</string>
     <string name="auth_no_account_prompt">Não tem conta? Registe-se</string>
     <string name="auth_has_account_prompt">Já tem conta? Entrar</string>
     <string name="auth_missing_credentials">Preencha o email e a palavra-passe.</string>

@@ -8,6 +8,7 @@ import dev.ividi.weatherapp.data.model.GeocodingResponse
 import dev.ividi.weatherapp.data.model.HistoryEntry
 import dev.ividi.weatherapp.data.model.LoginRequest
 import dev.ividi.weatherapp.data.model.MarineResponse
+import dev.ividi.weatherapp.data.model.OAuthRequest
 import dev.ividi.weatherapp.data.model.RefreshRequest
 import dev.ividi.weatherapp.data.model.RegisterRequest
 import dev.ividi.weatherapp.data.model.UnitsPreference
@@ -33,6 +34,10 @@ interface WeatherApiService {
 
     @POST("api/v1/auth/refresh")
     suspend fun refresh(@Body request: RefreshRequest): AuthResponse
+
+    /** [provider] is lowercase, e.g. "google" -- the native ID token was already obtained on-device. */
+    @POST("api/v1/auth/oauth/{provider}")
+    suspend fun oauthLogin(@Path("provider") provider: String, @Body request: OAuthRequest): AuthResponse
 
     /** `Response<Unit>` (not a bare suspend return) so the 204 body is never decoded. */
     @POST("api/v1/auth/logout")
