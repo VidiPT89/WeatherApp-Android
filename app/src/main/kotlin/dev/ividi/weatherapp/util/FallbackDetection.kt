@@ -1,7 +1,7 @@
 package dev.ividi.weatherapp.util
 
 /** The backend's primary weather provider. Any other value means the secondary was used. */
-const val PRIMARY_PROVIDER = "open-meteo"
+const val PRIMARY_PROVIDER = "open-weather-map"
 
 /**
  * True when the backend served this response from its secondary/fallback provider

@@ -7,13 +7,13 @@ import org.junit.Test
 class FallbackDetectionTest {
 
     @Test
-    fun `open-meteo is not a fallback`() {
-        assertFalse(isFallbackProvider("open-meteo"))
+    fun `open-weather-map is not a fallback`() {
+        assertFalse(isFallbackProvider("open-weather-map"))
     }
 
     @Test
-    fun `open-weather-map is a fallback`() {
-        assertTrue(isFallbackProvider("open-weather-map"))
+    fun `open-meteo is a fallback`() {
+        assertTrue(isFallbackProvider("open-meteo"))
     }
 
     @Test
