@@ -175,6 +175,7 @@
     <string name="auth_missing_credentials">Preencha o email e a palavra-passe.</string>
     <string name="auth_missing_email">Indique um email.</string>
     <string name="auth_password_too_short">A palavra-passe deve ter pelo menos %1$d caracteres.</string>
+    <string name="auth_google_sign_in_failed">Não foi possível iniciar sessão com o Google. Tente novamente.</string>
 
     <!-- Backend error codes (errorCode field on ApiErrorBody) -->
     <string name="error_city_not_found">Não encontrámos essa cidade.</string>

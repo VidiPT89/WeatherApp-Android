@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.ividi.weatherapp.BuildConfig
@@ -112,6 +113,14 @@ fun RegisterScreen(
                 coroutineScope.launch {
                     runCatching { signInWithGoogle(context, BuildConfig.GOOGLE_WEB_CLIENT_ID) }
                         .onSuccess { idToken -> viewModel.loginWithOAuth("google", idToken) }
+                        .onFailure { error ->
+                            // The user dismissing the account picker is not a failure worth
+                            // reporting -- anything else (no Google account on device, Play
+                            // Services issue, etc.) previously failed completely silently.
+                            if (error !is GetCredentialCancellationException) {
+                                viewModel.showError(context.getString(R.string.auth_google_sign_in_failed))
+                            }
+                        }
                 }
             },
             enabled = uiState !is UiState.Loading,

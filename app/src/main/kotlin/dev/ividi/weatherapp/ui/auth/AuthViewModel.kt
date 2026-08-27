@@ -95,6 +95,12 @@ class AuthViewModel @Inject constructor(
         _uiState.value = UiState.Empty
     }
 
+    /** Surfaces a failure that happened before [loginWithOAuth] could even be called -- e.g.
+     * Credential Manager itself failing to produce a Google ID token. */
+    fun showError(message: String) {
+        _uiState.value = UiState.Error(message)
+    }
+
     private fun validateCredentials(email: String, password: String): String? = when {
         email.isBlank() -> stringProvider.get(R.string.auth_missing_email)
         password.length < MIN_PASSWORD_LENGTH ->
