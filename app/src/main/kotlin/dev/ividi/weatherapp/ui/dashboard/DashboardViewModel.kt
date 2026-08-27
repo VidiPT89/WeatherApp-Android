@@ -23,6 +23,7 @@ import dev.ividi.weatherapp.ui.navigation.Screen
 import dev.ividi.weatherapp.util.ErrorMessageProvider
 import dev.ividi.weatherapp.util.citySuggestionsFlow
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -74,6 +75,14 @@ class DashboardViewModel @Inject constructor(
     private var currentCity: String? = null
     /** Whether `currentCity` came from GPS auto-detection rather than a manual search. */
     private var lastLoadWasFromNearbyLocation = false
+
+    /**
+     * The in-flight [loadWeather] coroutine, if any. Without cancelling the previous one, two
+     * overlapping loads (e.g. a search submitted right after a units toggle, or two quick
+     * searches) can have their responses arrive out of order -- the *older* request's result
+     * would land last and silently overwrite the newer, correct one across all four state flows.
+     */
+    private var loadWeatherJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -158,6 +167,8 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun loadWeather(city: String, isFromNearbyLocation: Boolean = false) {
+        loadWeatherJob?.cancel()
+
         currentCity = city
         lastLoadWasFromNearbyLocation = isFromNearbyLocation
         _weatherState.value = UiState.Loading
@@ -165,7 +176,7 @@ class DashboardViewModel @Inject constructor(
         _marineState.value = UiState.Loading
         _insightsState.value = UiState.Loading
 
-        viewModelScope.launch {
+        loadWeatherJob = viewModelScope.launch {
             val unitsToUse = _units.value
             // supervisorScope is required here: plain `async` children of the same `launch`
             // propagate a failure to cancel their parent *and* siblings as soon as the child
