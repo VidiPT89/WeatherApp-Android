@@ -2,7 +2,9 @@
 <!--
     Reasonable min size for a small/medium at-a-glance weather widget (roughly 2x1 cells).
     updatePeriodMillis is 0: this widget is app-driven only (see WeatherWidgetRepository), it
-    never fetches on its own, so there is no periodic system refresh to configure.
+    never fetches on its own. The app (foreground use, or WeatherWidgetRefreshWorker running
+    periodically in the background) is what keeps its snapshot fresh, so there is no need for the
+    OS's own periodic refresh broadcast on top of that.
 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="110dp"

@@ -1,16 +1,25 @@
 package dev.ividi.weatherapp
 
 import android.app.Application
+import androidx.work.Configuration
+import androidx.hilt.work.HiltWorkerFactory
 import dagger.hilt.android.HiltAndroidApp
 import dev.ividi.weatherapp.data.repository.AppPreferencesRepository
+import dev.ividi.weatherapp.widget.WeatherWidgetRefreshScheduler
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 
 @HiltAndroidApp
-class WeatherApplication : Application() {
+class WeatherApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var appPreferencesRepository: AppPreferencesRepository
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 
     override fun onCreate() {
         super.onCreate()
@@ -20,5 +29,7 @@ class WeatherApplication : Application() {
         // independently below API 33; this call keeps our DataStore-backed Settings UI and the
         // actual applied locale in sync on every launch.
         runBlocking { appPreferencesRepository.applyPersistedLanguage() }
+
+        WeatherWidgetRefreshScheduler.schedule(this)
     }
 }

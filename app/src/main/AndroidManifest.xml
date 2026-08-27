@@ -17,6 +17,19 @@
         tools:targetApi="26"
         xmlns:tools="http://schemas.android.com/tools">
 
+        <!-- WorkManager is configured manually with HiltWorkerFactory (see WeatherApplication),
+             so its default androidx.startup-based auto-initialization must be disabled. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
