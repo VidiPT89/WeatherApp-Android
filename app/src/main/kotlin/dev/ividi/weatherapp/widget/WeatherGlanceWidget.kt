@@ -122,7 +122,7 @@ private fun FilledWidgetContent(snapshot: WeatherWidgetSnapshot) {
             ),
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = widgetConditionEmoji(snapshot.description), style = TextStyle(fontSize = 26.sp))
+            Text(text = widgetConditionEmoji(snapshot.description, snapshot.isNight), style = TextStyle(fontSize = 26.sp))
             Spacer(modifier = GlanceModifier.width(6.dp))
             Text(
                 text = "${snapshot.temperature.roundToInt()}${snapshot.temperatureSymbol}",
@@ -153,15 +153,15 @@ private fun FilledWidgetContent(snapshot: WeatherWidgetSnapshot) {
  * RemoteViews, and a plain [androidx.glance.text.Text] glyph avoids adding/maintaining a parallel
  * set of condition icon assets just for the widget.
  */
-private fun widgetConditionEmoji(description: String): String {
+private fun widgetConditionEmoji(description: String, isNight: Boolean): String {
     val normalized = description.lowercase()
     return when {
         "thunderstorm" in normalized -> "⛈️"
         "snow" in normalized -> "❄️"
         "drizzle" in normalized || "rain" in normalized -> "🌧️"
         "fog" in normalized || "mist" in normalized || "haze" in normalized -> "🌫️"
-        "overcast" in normalized || "cloud" in normalized -> "☁️"
-        "clear" in normalized || "sun" in normalized -> "☀️"
+        "overcast" in normalized || "cloud" in normalized -> "☁️" // No distinct night-cloud glyph worth the extra branch.
+        "clear" in normalized || "sun" in normalized -> if (isNight) "🌙" else "☀️"
         else -> "🌡️"
     }
 }

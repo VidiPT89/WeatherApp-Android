@@ -29,6 +29,8 @@ import dev.ividi.weatherapp.ui.common.weatherConditionGradient
 import dev.ividi.weatherapp.ui.common.weatherConditionNeedsLightText
 import dev.ividi.weatherapp.util.localizedWeatherDescription
 import dev.ividi.weatherapp.util.toDisplayTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 /**
  * The current-weather card: city/country, big temperature, description, feels-like/humidity/
@@ -42,13 +44,20 @@ fun CurrentWeatherCard(
     modifier: Modifier = Modifier,
     todayForecast: DailyForecastEntry? = null,
 ) {
-    val textColor = if (weatherConditionNeedsLightText(weather.description)) Color.White else Color.Black
+    // Same "outside today's sunrise/sunset" check as WeatherApp-iOS's WeatherCardView -- without
+    // it this card kept its bright daytime gradient even at 3am.
+    val isNight = todayForecast?.let { today ->
+        val observedAtLocal = weather.observedAt.toLocalDateTime(TimeZone.UTC)
+        observedAtLocal < today.sunrise || observedAtLocal > today.sunset
+    } ?: false
+
+    val textColor = if (weatherConditionNeedsLightText(weather.description, isNight)) Color.White else Color.Black
     val dividerColor = textColor.copy(alpha = 0.25f)
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(weatherConditionGradient(weather.description), RoundedCornerShape(20.dp))
+            .background(weatherConditionGradient(weather.description, isNight), RoundedCornerShape(20.dp))
             .padding(20.dp),
     ) {
         Row(

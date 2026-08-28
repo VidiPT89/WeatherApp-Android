@@ -30,6 +30,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
@@ -196,7 +198,15 @@ class DashboardViewModel @Inject constructor(
                     // best-effort: never something that should turn a successful load into an
                     // error.
                     if (isFromNearbyLocation) {
-                        runCatching { weatherWidgetRepository.saveSnapshot(weather) }
+                        // Same "outside today's sunrise/sunset" check CurrentWeatherCard uses --
+                        // awaiting forecastDeferred here just reads its already in-flight result,
+                        // no extra network call.
+                        val isNight = runCatching { forecastDeferred.await() }.getOrNull()
+                            ?.daily?.firstOrNull()?.let { today ->
+                                val observedAtLocal = weather.observedAt.toLocalDateTime(TimeZone.UTC)
+                                observedAtLocal < today.sunrise || observedAtLocal > today.sunset
+                            } ?: false
+                        runCatching { weatherWidgetRepository.saveSnapshot(weather, isNight) }
                     }
                     UiState.Success(weather)
                 } catch (error: ApiException) {

@@ -2,6 +2,7 @@ package dev.ividi.weatherapp.data.repository
 
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -26,6 +27,7 @@ private val TEMPERATURE_KEY = doublePreferencesKey("temperature")
 private val TEMPERATURE_SYMBOL_KEY = stringPreferencesKey("temperature_symbol")
 private val DESCRIPTION_KEY = stringPreferencesKey("description")
 private val LAST_UPDATED_KEY = longPreferencesKey("last_updated_epoch_millis")
+private val IS_NIGHT_KEY = booleanPreferencesKey("is_night")
 
 /**
  * Persists the last weather the Dashboard successfully loaded, purely so the home-screen widget
@@ -47,7 +49,7 @@ class WeatherWidgetRepository @Inject constructor(@ApplicationContext private va
 
     suspend fun currentSnapshot(): WeatherWidgetSnapshot? = snapshot.first()
 
-    suspend fun saveSnapshot(weather: WeatherResponse) {
+    suspend fun saveSnapshot(weather: WeatherResponse, isNight: Boolean = false) {
         dataStore.edit { prefs ->
             prefs[CITY_KEY] = weather.city
             prefs[COUNTRY_KEY] = weather.country
@@ -55,6 +57,7 @@ class WeatherWidgetRepository @Inject constructor(@ApplicationContext private va
             prefs[TEMPERATURE_SYMBOL_KEY] = weather.units.temperatureSymbol
             prefs[DESCRIPTION_KEY] = weather.description
             prefs[LAST_UPDATED_KEY] = System.currentTimeMillis()
+            prefs[IS_NIGHT_KEY] = isNight
         }
         WeatherGlanceWidget().updateAll(context)
     }
@@ -68,6 +71,7 @@ class WeatherWidgetRepository @Inject constructor(@ApplicationContext private va
             temperatureSymbol = this[TEMPERATURE_SYMBOL_KEY] ?: "°C",
             description = this[DESCRIPTION_KEY].orEmpty(),
             lastUpdatedEpochMillis = this[LAST_UPDATED_KEY] ?: 0L,
+            isNight = this[IS_NIGHT_KEY] ?: false,
         )
     }
 }

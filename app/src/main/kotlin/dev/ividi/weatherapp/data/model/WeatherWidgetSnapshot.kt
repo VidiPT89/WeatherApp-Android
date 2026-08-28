@@ -16,4 +16,7 @@ data class WeatherWidgetSnapshot(
      * copy and the keyword source for the widget's condition icon/emoji. */
     val description: String,
     val lastUpdatedEpochMillis: Long,
+    /** Whether [lastUpdatedEpochMillis] fell outside today's sunrise/sunset -- lets the widget
+     * show a night-appropriate icon instead of always looking like daytime. */
+    val isNight: Boolean = false,
 )
