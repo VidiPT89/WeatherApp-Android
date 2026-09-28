@@ -33,8 +33,6 @@
     <string name="weather_rain_likely_no">Chuva improvável hoje</string>
 
     <!-- Detail bottom sheets (tap a Dashboard card for more) -->
-    <string name="detail_sheet_close">Fechar</string>
-    <string name="weather_detail_title">Detalhes do tempo</string>
     <string name="weather_detail_today_section">Mais sobre hoje</string>
     <string name="marine_detail_today_section">Ondulação de hoje (previsão)</string>
     <string name="marine_detail_tides_empty">Sem marés estimadas para esta localização.</string>

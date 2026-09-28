@@ -1,7 +1,6 @@
 package dev.ividi.weatherapp.ui.settings
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.ividi.weatherapp.R
@@ -146,10 +146,10 @@ fun SettingsScreen(
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             val context = LocalContext.current
             Text(text = stringResource(R.string.settings_about_title), style = MaterialTheme.typography.titleMedium)
-            TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(WEBSITE_URL))) }) {
+            TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, WEBSITE_URL.toUri())) }) {
                 Text(stringResource(R.string.settings_about_website))
             }
-            TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL))) }) {
+            TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, GITHUB_URL.toUri())) }) {
                 Text(stringResource(R.string.settings_about_github))
             }
             Text(text = stringResource(R.string.settings_about_footer), style = MaterialTheme.typography.bodySmall)

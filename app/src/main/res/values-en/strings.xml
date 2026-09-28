@@ -33,8 +33,6 @@
     <string name="weather_rain_likely_no">Rain unlikely today</string>
 
     <!-- Detail bottom sheets (tap a Dashboard card for more) -->
-    <string name="detail_sheet_close">Close</string>
-    <string name="weather_detail_title">Weather details</string>
     <string name="weather_detail_today_section">More about today</string>
     <string name="marine_detail_today_section">Today\'s swell (forecast)</string>
     <string name="marine_detail_tides_empty">No estimated tides for this location.</string>

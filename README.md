@@ -11,7 +11,7 @@ One of three clients (Web / iOS / Android) built on top of the same backend. Thi
 - 🔎 City search with debounced autocomplete (backend geocoding endpoint) — also used by "add favorite," so a favorite can only ever be a real geocoded place, never unvalidated free text
 - 🌡️ Current weather + hourly/daily forecast chart (hand-rolled Canvas line/bar charts), with a °C/°F toggle
 - 📇 **Tap a Dashboard card for more** — the weather, sea-conditions and "more about today" cards each open a bottom sheet with more detail than fits on the compact card (full stat breakdown, tide list with today's swell/fishing/surf context, next-7-days UV/outdoor/fishing/surf outlook)
-- 🏠 **Home-screen widget** (Jetpack Glance) — shows the last weather the app itself loaded; it never fetches on its own, it's refreshed only when the Dashboard successfully loads weather
+- 🏠 **Home-screen widget** (Jetpack Glance) — shows the last weather the app loaded, refreshed whenever the Dashboard loads weather, right after the widget is placed, and every 3 hours in the background (WorkManager)
 - ⚡ **Cache badge** — "dados frescos" vs "servido da cache há Xs", ticking live from the response's `fromCache` flag and timestamp
 - 🔁 **Fallback banner** — appears when the response was served by the secondary provider
 - 🔐 Auth (register/login, JWT in `EncryptedSharedPreferences`), favorite cities (add/remove), search history (delete one entry or clear all), saved unit preference
@@ -50,7 +50,7 @@ app/src/main/kotlin/dev/ividi/weatherapp/
 ├── ui/                # one ViewModel (StateFlow) + Composable screen per feature:
 │                       # auth, dashboard (search, weather card, cache badge, fallback banner, forecast chart,
 │                       # tap-for-detail bottom sheets), favorites, history, settings, admin (admin-only)
-├── widget/             # Jetpack Glance home-screen widget (app-driven only, no independent fetching)
+├── widget/             # Jetpack Glance home-screen widget + its WorkManager background refresh
 └── di/                 # Hilt modules
 ```
 
@@ -60,12 +60,12 @@ app/src/main/kotlin/dev/ividi/weatherapp/
 - **`10.0.2.2` instead of `localhost`**: the Android emulator runs in its own network namespace: `10.0.2.2` is Google's documented alias back to the host machine's `localhost`. A `network_security_config.xml` cleartext exception is needed for it too, since Android blocks plaintext HTTP by default since API 28.
 - **Hand-rolled Canvas charts over a charting library**: there's no Compose charting library as mature as Swift Charts/Recharts; for a simple hourly-line/daily-bar chart, a small custom `Canvas` composable is less risk than pulling in and learning a third-party dependency (KISS/YAGNI).
 - **Local-datetime forecast parsing**: `hourly[].time`/`daily[].date` come back from the API without a timezone offset (Open-Meteo's `timezone=auto` already localizes them), so they're parsed as `kotlinx.datetime.LocalDateTime`/`LocalDate`, not `Instant`.
-- **Widget is app-driven only, by design**: the home-screen widget (Jetpack Glance) never makes its own network call — it renders whatever `WeatherWidgetRepository` last persisted, written by `DashboardViewModel` after a successful load and pushed to any placed widgets immediately via `GlanceAppWidget.updateAll`. No `WorkManager`/periodic fetch, and `updatePeriodMillis="0"` in the widget's provider XML reflects that on purpose.
+- **Widget renders a stored snapshot, refreshed by the app**: the Glance widget itself never makes a network call. It renders whatever `WeatherWidgetRepository` last persisted, written by `DashboardViewModel` after a successful load and pushed to placed widgets via `GlanceAppWidget.updateAll`. So the widget doesn't go stale between app opens, `WeatherWidgetRefreshWorker` replays the same GPS lookup every 3 hours (WorkManager, network required), plus once straight away when the widget is placed. `updatePeriodMillis="0"` stays on purpose, because WorkManager owns the schedule.
 - **`ModalBottomSheet` for card detail views**: the Dashboard's weather/sea-conditions/insights cards each open a `ModalBottomSheet` on tap rather than a new destination — consistent with this app already using in-place dialogs (e.g. Admin's delete confirmation) instead of extra nav-graph routes for transient, dismissible content.
 
 ## 🚀 How to Run
 
-Prerequisites: JDK 17, Android SDK (API 34+ platform + an emulator system image), and the [Weather API](https://github.com/VidiPT89/WeatherAPI) running locally on `http://localhost:8080` (see that repo's README) — or point `NetworkModule`'s `BASE_URL` at the live deployment: `https://weather-api-production-68ff.up.railway.app/`.
+Prerequisites: JDK 17, Android SDK (API 34+ platform + an emulator system image). By default the app talks to the live [Weather API](https://github.com/VidiPT89/WeatherAPI) deployment at `https://weatherapi-4r5x.onrender.com/` (Render free tier, so the first request after a quiet period can take up to a minute). To use a local backend instead (see that repo's README), change `BASE_URL` in `NetworkModule` (`http://10.0.2.2:8080/` from the emulator).
 
 ```bash
 export JAVA_HOME=/opt/homebrew/opt/openjdk@17   # or your JDK 17 install
@@ -94,7 +94,7 @@ Given the project's scope (three client apps on one backend), test effort is wei
 ## 📝 Notes
 
 - Requires the backend reachable at `http://10.0.2.2:8080` from the emulator; on a physical device, point it at the host machine's LAN IP instead.
-- The home-screen widget shows a placeholder until the app has been opened and successfully loaded weather at least once — it has no data of its own before that.
+- The widget's background refresh needs location permission, which is granted inside the app, so on a fresh install the widget shows a placeholder until the app has been opened once.
 
 ## 📄 License
 
