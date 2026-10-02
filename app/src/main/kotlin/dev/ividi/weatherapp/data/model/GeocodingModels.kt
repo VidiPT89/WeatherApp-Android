@@ -14,4 +14,7 @@ data class GeocodingResult(
     val country: String,
     val latitude: Double,
     val longitude: Double,
-)
+) {
+    val qualifiedName: String
+        get() = if (country.isBlank()) name else "$name, $country"
+}

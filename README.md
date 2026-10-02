@@ -76,7 +76,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n dev.ividi.weatherapp/.MainActivity
 ```
 
-The app's base URL is `http://10.0.2.2:8080` (the emulator's alias for the host machine) — no configuration needed for the default local setup.
+The default base URL is the live HTTPS API. `http://10.0.2.2:8080/` is only for a backend running locally on the emulator's host.
 
 ## ✅ Tests
 
@@ -93,7 +93,7 @@ Given the project's scope (three client apps on one backend), test effort is wei
 
 ## 📝 Notes
 
-- Requires the backend reachable at `http://10.0.2.2:8080` from the emulator; on a physical device, point it at the host machine's LAN IP instead.
+- The live API works on emulators and physical devices. For local development on a physical device, use a reachable LAN address with the appropriate transport configuration.
 - The widget's background refresh needs location permission, which is granted inside the app, so on a fresh install the widget shows a placeholder until the app has been opened once.
 
 ## 📄 License

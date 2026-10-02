@@ -25,6 +25,8 @@ import dev.ividi.weatherapp.util.citySuggestionsFlow
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -85,6 +87,11 @@ class DashboardViewModel @Inject constructor(
      * would land last and silently overwrite the newer, correct one across all four state flows.
      */
     private var loadWeatherJob: Job? = null
+    private var selectionVersion = 0
+    private var userSelectedUnits = false
+    private val initialPreferences = viewModelScope.async {
+        runCatching { preferencesRepository.getPreferredUnits() }.getOrDefault(Units.METRIC)
+    }
 
     init {
         viewModelScope.launch {
@@ -92,8 +99,8 @@ class DashboardViewModel @Inject constructor(
                 .collect { _suggestions.value = it }
         }
         viewModelScope.launch {
-            _units.value = runCatching { preferencesRepository.getPreferredUnits() }
-                .getOrDefault(Units.METRIC)
+            val preferred = initialPreferences.await()
+            if (!userSelectedUnits) _units.value = preferred
         }
 
         val preloadedCity = savedStateHandle.get<String>(Screen.Dashboard.CITY_ARG)
@@ -108,7 +115,7 @@ class DashboardViewModel @Inject constructor(
 
     fun onSuggestionSelected(result: GeocodingResult) {
         _suggestions.value = emptyList()
-        onCitySelected(result.name)
+        onCitySelected(result.qualifiedName)
     }
 
     fun onSearchSubmit(city: String) {
@@ -135,18 +142,27 @@ class DashboardViewModel @Inject constructor(
      * required flow.
      */
     fun loadNearbyWeather() {
-        if (currentCity != null) return
+        if (currentCity != null || _isLocating.value) return
+        val version = selectionVersion
+        _isLocating.value = true
 
         viewModelScope.launch {
-            _isLocating.value = true
+            val preferred = initialPreferences.await()
+            if (!userSelectedUnits) _units.value = preferred
             val weather = runCatching {
                 val location = locationService.getCurrentLocation()
                 weatherRepository.getWeatherNearby(location.latitude, location.longitude, _units.value)
             }.getOrNull()
+            currentCoroutineContext().ensureActive()
             _isLocating.value = false
 
             // No location provider enabled or the lookup failed -- stay on the empty state.
-            weather?.let { onCitySelected(it.city, isFromNearbyLocation = true) }
+            if (version != selectionVersion) return@launch
+            weather?.let {
+                val city = if (it.country.isBlank()) it.city else "${it.city}, ${it.country}"
+                _searchQuery.value = city
+                loadWeather(city, isFromNearbyLocation = true, nearbyWeather = it)
+            }
         }
     }
 
@@ -156,6 +172,9 @@ class DashboardViewModel @Inject constructor(
 
     /** Toggles metric/imperial, re-fetches the current city, and fire-and-forget saves the pref. */
     fun onUnitsToggled() {
+        selectionVersion++
+        userSelectedUnits = true
+        _isLocating.value = false
         val newUnits = _units.value.toggled()
         _units.value = newUnits
 
@@ -168,8 +187,14 @@ class DashboardViewModel @Inject constructor(
         currentCity?.let { loadWeather(it, lastLoadWasFromNearbyLocation) }
     }
 
-    private fun loadWeather(city: String, isFromNearbyLocation: Boolean = false) {
+    private fun loadWeather(
+        city: String,
+        isFromNearbyLocation: Boolean = false,
+        nearbyWeather: WeatherResponse? = null,
+    ) {
         loadWeatherJob?.cancel()
+        selectionVersion++
+        _isLocating.value = false
 
         currentCity = city
         lastLoadWasFromNearbyLocation = isFromNearbyLocation
@@ -179,6 +204,8 @@ class DashboardViewModel @Inject constructor(
         _insightsState.value = UiState.Loading
 
         loadWeatherJob = viewModelScope.launch {
+            val preferred = initialPreferences.await()
+            if (!userSelectedUnits) _units.value = preferred
             val unitsToUse = _units.value
             // supervisorScope is required here: plain `async` children of the same `launch`
             // propagate a failure to cancel their parent *and* siblings as soon as the child
@@ -186,49 +213,49 @@ class DashboardViewModel @Inject constructor(
             // one of these four calls would crash the whole app instead of being caught by the
             // per-await try/catch below. A supervisor isolates each child's failure instead.
             supervisorScope {
-                val weatherDeferred = async { weatherRepository.getWeather(city, unitsToUse) }
+                val weatherDeferred = async { nearbyWeather ?: weatherRepository.getWeather(city, unitsToUse) }
                 val forecastDeferred = async { weatherRepository.getForecast(city, unitsToUse) }
                 val marineDeferred = async { marineRepository.getMarine(city, unitsToUse) }
                 val insightsDeferred = async { insightsRepository.getInsights(city, unitsToUse) }
 
-                _weatherState.value = try {
-                    val weather = weatherDeferred.await()
-                    // The widget answers "what's the weather where I am", not "what was the last
-                    // city I looked up" -- only ever updated from the GPS-detected city. Also
-                    // best-effort: never something that should turn a successful load into an
-                    // error.
-                    if (isFromNearbyLocation) {
-                        // Same "outside today's sunrise/sunset" check CurrentWeatherCard uses --
-                        // awaiting forecastDeferred here just reads its already in-flight result,
-                        // no extra network call.
-                        val isNight = runCatching { forecastDeferred.await() }.getOrNull()
-                            ?.daily?.firstOrNull()?.let { today ->
-                                val observedAtLocal = weather.observedAt.toLocalDateTime(TimeZone.UTC)
-                                observedAtLocal < today.sunrise || observedAtLocal > today.sunset
-                            } ?: false
-                        runCatching { weatherWidgetRepository.saveSnapshot(weather, isNight) }
+                launch {
+                    try {
+                        val weather = weatherDeferred.await()
+                        _weatherState.value = UiState.Success(weather)
+                        // Widget work never delays the visible current-weather card.
+                        if (isFromNearbyLocation) {
+                            val isNight = runCatching { forecastDeferred.await() }.getOrNull()
+                                ?.daily?.firstOrNull()?.let { today ->
+                                    val observedAtLocal = weather.observedAt.toLocalDateTime(TimeZone.UTC)
+                                    observedAtLocal < today.sunrise || observedAtLocal > today.sunset
+                                } ?: false
+                            currentCoroutineContext().ensureActive()
+                            runCatching { weatherWidgetRepository.saveSnapshot(weather, isNight) }
+                        }
+                    } catch (error: ApiException) {
+                        _weatherState.value = UiState.Error(errorMessageProvider.messageFor(error))
                     }
-                    UiState.Success(weather)
-                } catch (error: ApiException) {
-                    UiState.Error(errorMessageProvider.messageFor(error))
                 }
-
-                _forecastState.value = try {
-                    UiState.Success(forecastDeferred.await())
-                } catch (error: ApiException) {
-                    UiState.Error(errorMessageProvider.messageFor(error))
+                launch {
+                    _forecastState.value = try {
+                        UiState.Success(forecastDeferred.await())
+                    } catch (error: ApiException) {
+                        UiState.Error(errorMessageProvider.messageFor(error))
+                    }
                 }
-
-                _marineState.value = try {
-                    UiState.Success(marineDeferred.await())
-                } catch (error: ApiException) {
-                    UiState.Error(errorMessageProvider.messageFor(error))
+                launch {
+                    _marineState.value = try {
+                        UiState.Success(marineDeferred.await())
+                    } catch (error: ApiException) {
+                        UiState.Error(errorMessageProvider.messageFor(error))
+                    }
                 }
-
-                _insightsState.value = try {
-                    UiState.Success(insightsDeferred.await())
-                } catch (error: ApiException) {
-                    UiState.Error(errorMessageProvider.messageFor(error))
+                launch {
+                    _insightsState.value = try {
+                        UiState.Success(insightsDeferred.await())
+                    } catch (error: ApiException) {
+                        UiState.Error(errorMessageProvider.messageFor(error))
+                    }
                 }
             }
         }

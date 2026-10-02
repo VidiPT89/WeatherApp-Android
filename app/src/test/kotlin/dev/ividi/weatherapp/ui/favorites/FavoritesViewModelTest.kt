@@ -189,7 +189,7 @@ class FavoritesViewModelTest {
         assertEquals("GET", addRequest.method)
         val postRequest = server.takeRequest()
         assertEquals("POST", postRequest.method)
-        assertTrue(postRequest.body.readUtf8().contains("Porto"))
+        assertTrue(postRequest.body.readUtf8().contains("Porto, Portugal"))
     }
 
     @Test

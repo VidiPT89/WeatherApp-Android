@@ -70,7 +70,7 @@ class FavoritesViewModel @Inject constructor(
     fun onSuggestionSelected(result: GeocodingResult) {
         _suggestions.value = emptyList()
         _newCityQuery.value = ""
-        addFavorite(result.name)
+        addFavorite(result.qualifiedName)
     }
 
     /**
