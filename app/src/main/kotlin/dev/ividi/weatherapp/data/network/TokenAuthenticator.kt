@@ -9,9 +9,11 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import retrofit2.HttpException
 
 private const val AUTHORIZATION_HEADER = "Authorization"
 private const val BEARER_PREFIX = "Bearer "
+private val DEFINITIVE_REFRESH_FAILURES = setOf(400, 401, 403)
 
 /**
  * OkHttp's idiomatic hook for transparent 401 recovery: invoked automatically before a failed
@@ -45,10 +47,14 @@ class TokenAuthenticator @Inject constructor(
 
             val refreshToken = tokenStore.getRefreshToken() ?: return null
             val refreshed = runBlocking {
-                runCatching { refreshApiService.refresh(RefreshRequest(refreshToken)) }.getOrNull()
-            }
-            if (refreshed == null) {
-                tokenStore.clearTokens()
+                runCatching { refreshApiService.refresh(RefreshRequest(refreshToken)) }
+            }.getOrElse { error ->
+                // Only a refresh token the server actually rejected ends the session. A timeout,
+                // a backend still waking up or a 5xx/429 just fails this request; the tokens stay
+                // so the next request can refresh again instead of forcing a new login.
+                if (error is HttpException && error.code() in DEFINITIVE_REFRESH_FAILURES) {
+                    tokenStore.clearTokens()
+                }
                 return null
             }
 

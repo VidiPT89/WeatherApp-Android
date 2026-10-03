@@ -22,6 +22,7 @@ import dev.ividi.weatherapp.ui.common.UiState
 import dev.ividi.weatherapp.ui.navigation.Screen
 import dev.ividi.weatherapp.util.ErrorMessageProvider
 import dev.ividi.weatherapp.util.citySuggestionsFlow
+import dev.ividi.weatherapp.util.isNightAt
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -32,8 +33,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
@@ -225,10 +224,7 @@ class DashboardViewModel @Inject constructor(
                         // Widget work never delays the visible current-weather card.
                         if (isFromNearbyLocation) {
                             val isNight = runCatching { forecastDeferred.await() }.getOrNull()
-                                ?.daily?.firstOrNull()?.let { today ->
-                                    val observedAtLocal = weather.observedAt.toLocalDateTime(TimeZone.UTC)
-                                    observedAtLocal < today.sunrise || observedAtLocal > today.sunset
-                                } ?: false
+                                ?.isNightAt(weather.observedAt) ?: false
                             currentCoroutineContext().ensureActive()
                             runCatching { weatherWidgetRepository.saveSnapshot(weather, isNight) }
                         }

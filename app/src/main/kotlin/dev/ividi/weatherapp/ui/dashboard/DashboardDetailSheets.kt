@@ -39,8 +39,6 @@ import dev.ividi.weatherapp.ui.common.weatherConditionNeedsLightText
 import dev.ividi.weatherapp.util.localizedWeatherDescription
 import dev.ividi.weatherapp.util.toDisplayTime
 import kotlin.math.roundToInt
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 private const val INSIGHTS_DAYS_AHEAD = 7
 private const val METERS_TO_FEET = 3.281
@@ -54,11 +52,12 @@ private const val METERS_TO_FEET = 3.281
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun WeatherDetailSheet(weather: WeatherResponse, todayForecast: DailyForecastEntry?, modifier: Modifier = Modifier) {
-    val isNight = todayForecast?.let { today ->
-        val observedAtLocal = weather.observedAt.toLocalDateTime(TimeZone.UTC)
-        observedAtLocal < today.sunrise || observedAtLocal > today.sunset
-    } ?: false
+fun WeatherDetailSheet(
+    weather: WeatherResponse,
+    todayForecast: DailyForecastEntry?,
+    isNight: Boolean,
+    modifier: Modifier = Modifier,
+) {
     val textColor = if (weatherConditionNeedsLightText(weather.description, isNight)) Color.White else Color.Black
 
     Column(

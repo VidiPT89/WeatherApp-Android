@@ -11,6 +11,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -110,6 +111,31 @@ class TokenAuthenticatorTest {
 
         assertNull(retriedRequest)
         assertTrue(tokenStore.cleared)
+    }
+
+    @Test
+    fun `keeps the session when the refresh call fails transiently`() {
+        server.enqueue(MockResponse().setResponseCode(503))
+        val tokenStore = FakeTokenStore(token = "expired-token", refreshToken = "valid-refresh-token")
+        val authenticator = TokenAuthenticator(tokenStore, refreshApiService)
+
+        val retriedRequest = authenticator.authenticate(null, fakeFailedResponse("Bearer expired-token"))
+
+        assertNull(retriedRequest)
+        assertFalse(tokenStore.cleared)
+        assertEquals("valid-refresh-token", tokenStore.getRefreshToken())
+    }
+
+    @Test
+    fun `keeps the session when the backend cannot be reached`() {
+        server.shutdown()
+        val tokenStore = FakeTokenStore(token = "expired-token", refreshToken = "valid-refresh-token")
+        val authenticator = TokenAuthenticator(tokenStore, refreshApiService)
+
+        val retriedRequest = authenticator.authenticate(null, fakeFailedResponse("Bearer expired-token"))
+
+        assertNull(retriedRequest)
+        assertFalse(tokenStore.cleared)
     }
 
     @Test

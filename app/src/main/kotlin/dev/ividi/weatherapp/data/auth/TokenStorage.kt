@@ -2,6 +2,7 @@ package dev.ividi.weatherapp.data.auth
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -45,18 +46,18 @@ class TokenStorage @Inject constructor(@ApplicationContext context: Context) : T
     override fun getRefreshToken(): String? = encryptedPrefs.getString(KEY_REFRESH_TOKEN, null)
 
     override fun saveTokens(token: String, refreshToken: String) {
-        encryptedPrefs.edit()
-            .putString(KEY_JWT_TOKEN, token)
-            .putString(KEY_REFRESH_TOKEN, refreshToken)
-            .apply()
+        encryptedPrefs.edit {
+            putString(KEY_JWT_TOKEN, token)
+            putString(KEY_REFRESH_TOKEN, refreshToken)
+        }
         _tokenFlow.value = token
     }
 
     override fun clearTokens() {
-        encryptedPrefs.edit()
-            .remove(KEY_JWT_TOKEN)
-            .remove(KEY_REFRESH_TOKEN)
-            .apply()
+        encryptedPrefs.edit {
+            remove(KEY_JWT_TOKEN)
+            remove(KEY_REFRESH_TOKEN)
+        }
         _tokenFlow.value = null
     }
 

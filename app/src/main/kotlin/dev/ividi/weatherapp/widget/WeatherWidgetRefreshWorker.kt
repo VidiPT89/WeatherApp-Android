@@ -14,8 +14,7 @@ import dev.ividi.weatherapp.data.repository.PreferencesRepository
 import dev.ividi.weatherapp.data.repository.WeatherRepository
 import dev.ividi.weatherapp.data.repository.WeatherWidgetRepository
 import dev.ividi.weatherapp.location.LocationService
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import dev.ividi.weatherapp.util.isNightAt
 
 /**
  * Periodic background refresh so the home-screen widget doesn't keep showing stale (or, after a
@@ -56,10 +55,7 @@ class WeatherWidgetRefreshWorker @AssistedInject constructor(
             // just means the widget renders as if it were day, same fallback the app itself uses
             // when it has no forecast on hand yet.
             val isNight = runCatching { weatherRepository.getForecast(weather.city, units) }.getOrNull()
-                ?.daily?.firstOrNull()?.let { today ->
-                    val observedAtLocal = weather.observedAt.toLocalDateTime(TimeZone.UTC)
-                    observedAtLocal < today.sunrise || observedAtLocal > today.sunset
-                } ?: false
+                ?.isNightAt(weather.observedAt) ?: false
             weatherWidgetRepository.saveSnapshot(weather, isNight)
         }
 

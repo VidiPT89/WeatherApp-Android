@@ -9,6 +9,8 @@ import kotlinx.serialization.Serializable
  *
  * NOTE: [HourlyForecastEntry.time] has no timezone offset in the wire payload (e.g.
  * "2024-01-01T00:00:00"), so it is parsed as a local [LocalDateTime], never as an [Instant].
+ * [utcOffsetSeconds] is the city's own offset, needed to compare an [Instant] with those local
+ * times (see `isNightAt`); `null` only from a backend older than that field.
  */
 @Serializable
 data class ForecastResponse(
@@ -19,6 +21,7 @@ data class ForecastResponse(
     val fromCache: Boolean,
     val hourly: List<HourlyForecastEntry>,
     val daily: List<DailyForecastEntry>,
+    val utcOffsetSeconds: Int? = null,
 )
 
 @Serializable

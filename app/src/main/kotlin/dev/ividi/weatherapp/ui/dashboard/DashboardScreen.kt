@@ -47,6 +47,7 @@ import dev.ividi.weatherapp.ui.common.SearchAutocompleteField
 import dev.ividi.weatherapp.ui.common.UiState
 import dev.ividi.weatherapp.ui.common.WeatherCardSkeleton
 import dev.ividi.weatherapp.util.isFallbackProvider
+import dev.ividi.weatherapp.util.isNightAt
 
 /** Which of the tappable Dashboard cards currently has its detail bottom sheet open, if any. */
 private enum class DetailSheet { WEATHER, MARINE, INSIGHTS }
@@ -67,7 +68,8 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     // Tapping the weather/marine/insights cards opens a bottom sheet with more detail than fits
     // on the compact card -- see DashboardDetailSheets.kt.
     var activeSheet by remember { mutableStateOf<DetailSheet?>(null) }
-    val todayForecast = (forecastState as? UiState.Success)?.data?.daily?.firstOrNull()
+    val forecast = (forecastState as? UiState.Success)?.data
+    val todayForecast = forecast?.daily?.firstOrNull()
 
     val context = LocalContext.current
     val locationPermissionLauncher = rememberLauncherForActivityResult(
@@ -128,6 +130,7 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                             CurrentWeatherCard(
                                 weather = state.data,
                                 todayForecast = todayForecast,
+                                isNight = forecast?.isNightAt(state.data.observedAt) ?: false,
                                 modifier = Modifier.clickable { activeSheet = DetailSheet.WEATHER },
                             )
                         }
@@ -198,7 +201,11 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
         ModalBottomSheet(onDismissRequest = { activeSheet = null }, sheetState = sheetState) {
             when (sheet) {
                 DetailSheet.WEATHER -> (weatherState as? UiState.Success)?.data?.let { weather ->
-                    WeatherDetailSheet(weather = weather, todayForecast = todayForecast)
+                    WeatherDetailSheet(
+                        weather = weather,
+                        todayForecast = todayForecast,
+                        isNight = forecast?.isNightAt(weather.observedAt) ?: false,
+                    )
                 }
                 DetailSheet.MARINE -> (marineState as? UiState.Success)?.data?.let { marine ->
                     MarineDetailSheet(marine = marine, todayForecast = todayForecast)
